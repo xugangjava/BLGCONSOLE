@@ -570,6 +570,9 @@ def version_list():
             ,v.IS_APPROVE
             ,c.remark
             ,v.LAN_ID
+            ,v.UPDATE_LINK
+            ,v.USR_COUNT
+            ,v.UPDATE_COUNT
             FROM
              channel_version v LEFT JOIN channel c 
             ON v.CHANNEL_ID = c.ID
@@ -597,9 +600,9 @@ def do_edit_version():
     with DB() as db:
         db.sql_exec("""
                 UPDATE poker.channel_version 
-        SET NAME = '%s' , IS_APPROVE = %d, CHANNEL_ID = %d, LAN_ID = %d 
+        SET NAME = '%s' , IS_APPROVE = %d, CHANNEL_ID = %d, LAN_ID = %d ,UPDATE_LINK='%s'
         WHERE id=%d-- Please complete
-        ; """, p.str__VNAME, 1 if p.__IS_APPROVE == 'true' else 0, p.int__CID, p.int__LAN_ID, p.__pk)
+        ; """, p.str__VNAME, 1 if p.__IS_APPROVE == 'true' else 0, p.int__CID, p.int__LAN_ID,p.__UPDATE_LINK, p.__pk)
         db.commit()
     return SUCCESS
 

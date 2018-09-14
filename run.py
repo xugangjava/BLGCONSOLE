@@ -13,7 +13,7 @@ def run_bottle():
     }
     app = SessionMiddleware(bottle.app(), session_opts)
     bottle.debug(DEBUG)
-    bottle.run(app=app, host='192.168.3.11', port=8000, reloader=DEBUG)
+    bottle.run(app=app, host='192.168.6.106', port=8000, reloader=DEBUG)
 
 
 if __name__ == '__main__':
