@@ -34,6 +34,12 @@ elif sitecustomize.CUR_SERVER_ADDRESS == "ggblg":
     DEBUG = False
     DB_PWD = 'BMsCt8BNuRssYrkWB9c9'
     PAY_DEBUG = False
+elif sitecustomize.CUR_SERVER_ADDRESS == "btserver":
+    # 海外审核服务器
+    WEB_HOST = "http://btserver.billionocean.cn:8000/"
+    DEBUG = False
+    DB_PWD = 'BMsCt8BNuRssYrkWB9c9'
+    PAY_DEBUG = False
 else:
     # 本机服务器
     WEB_HOST = "http://192.168.1.102:8000/"
