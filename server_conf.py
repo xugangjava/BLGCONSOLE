@@ -28,7 +28,7 @@ if sitecustomize.CUR_SERVER_ADDRESS == "blgserver":
     DEBUG = False
     DB_PWD = 'BMsCt8BNuRssYrkWB9c9'
     PAY_DEBUG = False
-elif sitecustomize.CUR_SERVER_ADDRESS == "btserver":
+elif sitecustomize.CUR_SERVER_ADDRESS == "ggblg":
     # 海外审核服务器
     WEB_HOST = "http://btserver.billionocean.cn:8000/"
     DEBUG = False
