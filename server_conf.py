@@ -19,6 +19,58 @@ DEBUG = False
 DB_PWD='BMsCt8BNuRssYrkWB9c9'
 PAY_DEBUG=False
 IS_ENABLE_REAL_ITEM=1
+
+
+import sitecustomize
+if sitecustomize.CUR_SERVER_ADDRESS == "blgserver":
+    # 百乐宫正式服务器
+    WEB_HOST = "http://blgserver.billionocean.cn:8000/"
+    DEBUG = False
+    DB_PWD = 'BMsCt8BNuRssYrkWB9c9'
+    PAY_DEBUG = False
+elif sitecustomize.CUR_SERVER_ADDRESS == "btserver":
+    # 海外审核服务器
+    WEB_HOST = "http://btserver.billionocean.cn:8000/"
+    DEBUG = False
+    DB_PWD = 'BMsCt8BNuRssYrkWB9c9'
+    PAY_DEBUG = False
+else:
+    # 本机服务器
+    WEB_HOST = "http://192.168.1.102:8000/"
+    DEBUG = True
+    DB_PWD = 'bo2016@'
+    PAY_DEBUG = True
+
+
+def LOG_INIT():
+    import logging
+    from logging.handlers import TimedRotatingFileHandler
+    import re
+    log_fmt = '%(asctime)s\t: %(message)s'
+    formatter = logging.Formatter(log_fmt)
+    log_file_path = os.path.join(BASE_DIR, 'log', "console.log")
+    print "LOGPATH:" + log_file_path
+    log_file_handler = TimedRotatingFileHandler(log_file_path, when="midnight")
+    # log_file_handler.suffix = "%Y-%m-%d_%H-%M.log"
+    #  log_file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}.log$")
+    log_file_handler.setFormatter(formatter)
+    log_file_handler.setLevel(logging.NOTSET)
+    log = logging.getLogger()
+    log.setLevel(logging.NOTSET)
+
+    log.addHandler(log_file_handler)
+
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+    log.addHandler(handler)
+    return log
+
+
+LOG = LOG_INIT()
+
 def TRACE(*args):
+    data=str(''.join([str(a) for a in args])).encode('gbk').decode('gbk')
     if DEBUG:
-        print str(''.join([str(a) for a in args])).encode('gbk').decode('gbk')
+        print data
+    else:
+        LOG.info(data)
