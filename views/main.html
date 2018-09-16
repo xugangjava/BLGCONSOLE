@@ -1,0 +1,166 @@
+<!DOCTYPE>
+<html>
+<head>
+    <title>百乐宫管理后台</title>
+    <!--ExtJs框架开始-->
+    <script type="text/javascript" src="/static/ext/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="/static/ext/ext-all.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/ext/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="/static/ext/resources/css/icon.css" />
+    <script type="text/javascript" src="/static/ext/renders.js"></script>
+    <script type="text/javascript" src="/static/ext/vtypes.js"></script>
+    <script type="text/javascript" src="/static/ext/core.js"></script>
+    <script type="text/javascript" src="/static/ext/ext-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+        function ClickLeftTree(node, e) {
+            if (node.attributes.list || node.attributes.view) {
+                var tab = Ext.getCmp('MainView');
+                var exisTab = tab.findById(node.attributes.text);
+                if (!node.attributes.view) return;
+                if (!exisTab) {
+                    var view = node.attributes.view;
+                    if (typeof(view) === 'function') {
+                        view = view()
+                    }
+                    exisTab = tab.add({
+                        closable: true,
+                        closeAction: 'close',
+                        id: node.attributes.text,
+                        title: node.attributes.text,
+                        layout: {
+                            type: 'fit'
+                        },
+                        items: [view]
+                    });
+                    exisTab.show();
+                }
+                tab.setActiveTab(exisTab);
+            }
+        }
+
+        function UINFO(uid) {
+            Ext.Ajax.request({
+                url: '/blg/user_info/?uid=' + uid + "&r=" + Math.random(),
+                success: function(response) {
+                    var win = new Ext.Window({
+                        title: '玩家详细信息',
+                        closable: true,
+                        closeAction: 'close',
+                        width: 500,
+                        minWidth: 400,
+                        height: 450,
+                        maximizable: true,
+                        layout: 'fit',
+                        border: false,
+                        modal: true,
+                        html: response.responseText
+                    });
+                    win.show();
+                }
+            });
+
+        }
+
+        Ext.ns('Main');
+        Ext.onReady(function() {
+            Main.ClearTab = function() {
+                var tab = Ext.getCmp('MainView');
+                tab.items.each(function(item) {
+                    if (item.closable) {
+                        tab.remove(item.id);
+                    }
+                });
+            };
+
+            Main.TAB = new Ext.TabPanel({
+                id: 'MainView',
+                resizeTabs: true,
+                enableTabScroll: true,
+                region: 'center'
+            });
+
+            Main.Viewport = new Ext.Viewport({
+                layout: {
+                    type: 'border',
+                    padding: 5
+                },
+                defaults: {
+                    split: true
+                },
+                items: [{
+                        id: "head_panel",
+                        region: "north",
+                        xtype: 'panel',
+                        height: 80,
+                        layout: 'fit',
+                        split: false,
+                        border: false,
+                        items: [{
+                            xtype: 'panel',
+                            border: false,
+                            html: '<div><h6>百乐宫管理后台</h6><br><a href="/blg/console_login_out/" style="float:right;">注销</a></div>'
+                        }]
+                    }, {
+                        xtype: 'panel',
+                        layout: "accordion",
+                        id: 'main_left',
+                        width: 240,
+                        activeItem: 0,
+                        collapsible: false,
+                        region: 'west',
+                        items: []
+                    },
+                    Main.TAB, {
+                        region: "south",
+                        xtype: 'panel',
+                        height: 35,
+                        split: false,
+                        border: false,
+                        html: '<h6>百乐宫管理后台 </h6>'
+                    }
+                ]
+            });
+
+            var main_left = Ext.getCmp('main_left');
+            main_left.add({
+                title: '控制台',
+                xtype: 'panel',
+                id: 'main_left_console',
+                border: false,
+                collapsible: false,
+                items: [{
+                    xtype: 'treepanel',
+                    title: '',
+                    border: false,
+                    enableDD: false,
+                    collapsible: false,
+                    useArrows: true,
+                    rootVisible: false,
+                    multiSelect: false,
+                    singleExpand: false,
+                    id: 'main_left_tree',
+                    fields: ['text', 'view'],
+                    listeners: {
+                        click: ClickLeftTree
+                    },
+                    root: new Ext.tree.AsyncTreeNode({
+                        expanded: true,
+                        children: []
+                    })
+                }]
+            });
+            main_left.doLayout();
+
+        });
+    </script>
+    <script type="text/javascript" src="/static/ext/src/count.js"></script>
+    <script type="text/javascript" src="/static/ext/src/users.js"></script>
+    <script type="text/javascript" src="/static/ext/src/exchange.js"></script>
+    <!---->
+    <!--<script type="text/javascript" src="/static/ext/src/push.js"></script>-->
+    <!--<script type="text/javascript" src="/static/ext/src/order.js"></script>-->
+    <script type="text/javascript" src="/static/ext/src/channel.js"></script>
+    <script type="text/javascript" src="/static/ext/src/order.js"></script>
+</head>
+
+</html>

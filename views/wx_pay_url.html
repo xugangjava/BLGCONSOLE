@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>微信支付</title>
+    <script>
+        var url = '{{ mweb_url }}';
+        window.onload = function () {
+            if (url) {
+                document.getElementById("go").click();
+            }
+        };
+    </script>
+</head>
+<body>
+%if  redirect == 'TRUE':
+    <h1>请返回游戏查看支付结果-请关闭无痕浏览</h1>
+%else:
+    <a href='{{ mweb_url }}' id="go" style="display: none;width: 0;height: 0;">前往支付</a>
+%end
+</body>
+</html>
