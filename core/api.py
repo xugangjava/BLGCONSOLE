@@ -559,12 +559,12 @@ def api_do_exchange():
     address = p.str__address
     lxr = p.str__lxr
     phone = p.str__phone
-    EN=False
+    EN = False
     with DB() as db:
         rs = db.sql_dict("select versionid from usr where usrid=%d", p.uid)
         versionid = rs['versionid']
         if str(versionid).endswith('EN') or str(versionid).endswith('EN2'):
-            EN=True
+            EN = True
 
     if rtype == 2 and not all([address, lxr, phone]):
         return Fail("邮箱不能为空" if not EN else 'Email is empty')
@@ -846,7 +846,6 @@ def api_tranimage_from_url():
     return Success(data=new_img_url)
 
 
-
 PSS_APP_KEY = 'sandbox_0b14b5ad2fcd7f8d'
 PSS_SECRET_KEY = '6bf7788d3e80b00f7428a5d553fd74e7'
 
@@ -855,13 +854,13 @@ PSS_SECRET_KEY = '6bf7788d3e80b00f7428a5d553fd74e7'
 def api_payssion_notify_url():
     import hashlib
     p = ParamWarper(request)
-    TRACE("REQ:",str(request.body))
-    pm_id, amount, currency, order_id,state = p.__pm_id, p.__amount, p.__currency, p.__order_id,p.__state
-    #api_key|pm_id|amount|currency|order_id|state|sercret_key
-    verify = '|'.join([str(x) for x in [PSS_APP_KEY, pm_id, amount, currency, order_id,state, PSS_SECRET_KEY]])
-    TRACE("BEFORE:",verify)
+    TRACE("REQ:", str(request.body))
+    pm_id, amount, currency, order_id, state = p.__pm_id, p.__amount, p.__currency, p.__order_id, p.__state
+    # api_key|pm_id|amount|currency|order_id|state|sercret_key
+    verify = '|'.join([str(x) for x in [PSS_APP_KEY, pm_id, amount, currency, order_id, state, PSS_SECRET_KEY]])
+    TRACE("BEFORE:", verify)
     verify = hashlib.md5(verify).hexdigest()
-    TRACE("VERIFY:",verify)
+    TRACE("VERIFY:", verify)
     TRACE("SIGN:", p.__notify_sig)
     out_trade_no, transaction_id = order_id, p.__transaction_id
     if str(verify).lower() != str(p.__notify_sig).lower():
@@ -869,11 +868,15 @@ def api_payssion_notify_url():
         return error(404)
     if p.__state == 'completed':
         with DB() as db:
-            db.sql_proc("sp_pay_notify", out_trade_no, transaction_id)
+            db.sql_exec("""
+                INSERT INTO poker.paycallback
+                (TRANID, PAYID) 
+                VALUES ('%s', '%s');
+            """, transaction_id, out_trade_no)
             db.commit()
     return HTTPResponse("success", content_type="text/xml")
 
 
 @post('/api/mycard_notify_url/')
 def mycard_notify_url():
-    p=ParamWarper(request)
+    p = ParamWarper(request)
