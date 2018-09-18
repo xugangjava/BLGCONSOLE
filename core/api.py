@@ -853,10 +853,16 @@ PSS_SECRET_KEY = '6bf7788d3e80b00f7428a5d553fd74e7'
 
 @post('/api/payssion_notify_url/')
 def api_payssion_notify_url():
-    from common.core import md5 as m
+    import hashlib
     p = ParamWarper(request)
-    pm_id, amount, currency, order_id = p.__pm_id, p.__amount, p.__currency, p.__order_id
-    verify = m('|'.join([PSS_APP_KEY, pm_id, amount, currency, order_id, PSS_SECRET_KEY]))
+    TRACE("REQ:",str(request.body))
+    pm_id, amount, currency, order_id,state = p.__pm_id, p.__amount, p.__currency, p.__order_id,p.__state
+    #api_key|pm_id|amount|currency|order_id|state|sercret_key
+    verify = '|'.join([str(x) for x in [PSS_APP_KEY, pm_id, amount, currency, order_id,state, PSS_SECRET_KEY]])
+    TRACE("BEFORE:",verify)
+    verify = hashlib.md5(verify).hexdigest()
+    TRACE("VERIFY:",verify)
+    TRACE("SIGN:", p.__notify_sig)
     out_trade_no, transaction_id = order_id, p.__transaction_id
     if str(verify).lower() != str(p.__notify_sig).lower():
         TRACE("PARAM", pm_id, amount, currency, order_id)
