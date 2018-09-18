@@ -174,7 +174,8 @@ def user_list():
                 `usr`.`phone`,
                 `usr`.`luck`,
                 `usr`.`exp`,
-                  `usr`.`disable`,
+                `usr`.`chipslimit`,
+                `usr`.`disable`,
                 `usr`.`level`
             """,
             orderBy='`usr`.`usrid` DESC',

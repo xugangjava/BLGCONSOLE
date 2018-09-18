@@ -230,6 +230,7 @@ Ext.onReady(function () {
                             {header: '金钱', dataIndex: 'chips', width: 120},
                             {header: '积分', dataIndex: 'lotto', width: 100},
                             {header: '充值金额', dataIndex: 'moneyconsume', width: 100},
+                            {header: '筹码余额', dataIndex: 'chipslimit', width: 100},
                             {header: '当前版本', dataIndex: 'version', width: 100},
                             {header: '注册版本', dataIndex: 'regversion', width: 100},
                             {header: '是否禁用', dataIndex: 'disable', width: 100},

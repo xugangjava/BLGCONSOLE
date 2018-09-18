@@ -866,3 +866,8 @@ def api_payssion_notify_url():
             db.sql_proc("sp_pay_notify", out_trade_no, transaction_id)
             db.commit()
     return HTTPResponse("success", content_type="text/xml")
+
+
+@post('/api/mycard_notify_url/')
+def mycard_notify_url():
+    p=ParamWarper(request)
