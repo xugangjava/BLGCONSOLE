@@ -364,7 +364,7 @@ class DB(object):
 
     def sql_padding_2(self, start, limit, tbName,autopk, columNames, orderBy='', condition=''):
         curPage, pageSize = (start / limit) + 1, limit
-        self.sql_exec("call sp_page_split(%d,%d,'%s','%s','%s','%s',%d)",
+        self.sql_exec("call sp_page_split_2(%d,%d,'%s','%s','%s','%s',%d)",
                       curPage, pageSize, tbName, columNames, orderBy, condition,autopk)
         columns = [column[0] for column in self.cursor.description]
         items = [dict(zip(columns, row)) for row in self.cursor.fetchall()]
