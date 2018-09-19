@@ -958,6 +958,5 @@ def gm_send_chips_count():
             limit=p.int__limit,
             tbName="poker.gm_send_chips_count",
             columNames="""*""",
-            orderBy="TIM DESC",
-            condition=' AND '.join(condition)
+            orderBy="TIM DESC"
         )
