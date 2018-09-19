@@ -281,6 +281,22 @@ Ext.onReady(function () {
                     {header: '在线人数', dataIndex: 'ONLINE_COUNT', width: 120}
                 ]
             }
+        },{
+            text: '筹码发放统计',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'basegrid',
+                action: '/blg/gm_send_chips_count/',
+                flex: 4,
+                id: 'chips_send_grid',
+                nopadding: false,
+                columes: [
+                    {header: '日期', dataIndex: 'TIM', width: 200},
+                    {header: '筹码', dataIndex: 'COUNTS', width: 200},
+                    {header: '原因', dataIndex: 'REASON', width: 200}
+                ]
+            }
         }, {
             text: '玩家筹码统计',
             leaf: true,

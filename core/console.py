@@ -946,3 +946,18 @@ def game_play_info():
             orderBy="usrid DESC",
             condition=' AND '.join(condition)
         )
+
+
+@login_require
+@route('/blg/gm_send_chips_count/', method=['GET', 'POST'])
+def gm_send_chips_count():
+    p=ParamWarper(request)
+    with DB() as db:
+        return db.sql_padding(
+            start=p.int__start,
+            limit=p.int__limit,
+            tbName="poker.gm_send_chips_count",
+            columNames="""*""",
+            orderBy="TIM DESC",
+            condition=' AND '.join(condition)
+        )
