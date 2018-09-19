@@ -869,10 +869,11 @@ def user_money_log_list():
     if p.__UID: condition.append(" UID = " + str(p.__UID))
     if p.__REASON: condition.append(" REASON like ''%%%s%%''" % p.__REASON)
     with DB() as db:
-        return db.sql_padding(
+        return db.sql_padding_2(
             start=p.int__start,
             limit=p.int__limit,
             tbName="player_money_log p left join usr u on p.UID=u.usrid",
+            autopk='p.id',
             columNames="p.*,u.nickname,u.phone,id pk",
             orderBy="ID DESC",
             condition=' AND '.join(condition)

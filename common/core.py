@@ -362,6 +362,19 @@ class DB(object):
             "total": totalCount
         }
 
+    def sql_padding_2(self, start, limit, tbName,autopk, columNames, orderBy='', condition=''):
+        curPage, pageSize = (start / limit) + 1, limit
+        self.sql_exec("call sp_page_split(%d,%d,'%s','%s','%s','%s',%d)",
+                      curPage, pageSize, tbName, columNames, orderBy, condition,autopk)
+        columns = [column[0] for column in self.cursor.description]
+        items = [dict(zip(columns, row)) for row in self.cursor.fetchall()]
+        self.cursor.nextset()
+        totalCount = self.cursor.fetchone()
+        totalCount = totalCount[0]
+        return {
+            "items": items,
+            "total": totalCount
+        }
 
 DAY = 60 * 60 * 24
 HOUR = 60 * 60
