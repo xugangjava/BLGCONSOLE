@@ -294,7 +294,21 @@ Ext.onReady(function () {
                 columes: [
                     {header: '日期', dataIndex: 'TIM', width: 200},
                     {header: '筹码', dataIndex: 'COUNTS', width: 200},
-                    {header: '原因', dataIndex: 'REASON', width: 200}
+                    {header: '原因', dataIndex: 'REASON', width: 200},
+                    {header: '统计人数', dataIndex: 'USR_COUNT', width: 200},
+                    {
+                        header: '平均',
+                        dataIndex: 'USR_COUNT',
+                        width: 120,
+                        renderer: function (value, cellmeta, record, rowIndex, columnIndex, store) {
+                            var data = record.data, USR_COUNT = data['USR_COUNT'], COUNTS = data['COUNTS'];
+                            if (!USR_COUNT) {
+                                return 0;
+                            }
+                            var r = COUNTS * 1.0 / USR_COUNT;
+                            return r.toFixed(2);
+                        }
+                    }
                 ]
             }
         }, {
