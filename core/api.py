@@ -897,7 +897,7 @@ def mycard_auth_code():
             'ItemCode' : p.nstr__ItemCode,
             'ProductName' : p.__ProductName,
             'Amount' : p.__Amount,
-            'Currency' : p.__USD,
+            'Currency' : p.__Currency,
             'SandBoxMode' : p.__SandBoxMode,
             'Hash' : p.__Hash
         }
