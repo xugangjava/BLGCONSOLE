@@ -1,6 +1,6 @@
 # coding=utf-8
 import sitecustomize
-from bottle import post, request, error, HTTPResponse, get, view,route
+from bottle import post, request, error, HTTPResponse, get, view, route
 from common.pay import *
 from common.sms import *
 
@@ -878,7 +878,6 @@ def api_payssion_notify_url():
 
 
 
-
 @route('/api/mycard_auth_code/', method=['GET', 'POST'])
 def mycard_auth_code():
     try:
@@ -910,6 +909,27 @@ def mycard_auth_code():
     except Exception,e:
         TRACE_ERROR(e)
 
+
 @post('/api/mycard_notify_url/')
 def mycard_notify_url():
+    import json
     p = ParamWarper(request)
+    data = p.__DATA
+    data = json.loads(data)
+    ReturnCode = data['ReturnCode']
+    ReturnMsg = data['ReturnMsg']
+    FacServiceId = data['FacServiceId']
+    TotalNum = data['TotalNum']
+    FacTradeSeq = data['FacTradeSeq']
+    TRACE("PARAM", str(data))
+    if ReturnCode == 1:
+        for seq in FacTradeSeq:
+            transaction_id, out_trade_no = seq, seq
+            with DB() as db:
+                db.sql_exec("""
+                    INSERT INTO poker.paycallback
+                    (TRANID, PAYID) 
+                    VALUES ('%s', '%s');
+                """, transaction_id, out_trade_no)
+                db.commit()
+    return HTTPResponse("success", content_type="text/xml")
