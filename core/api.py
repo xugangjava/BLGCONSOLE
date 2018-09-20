@@ -1,6 +1,6 @@
 # coding=utf-8
 import sitecustomize
-from bottle import post, request, error, HTTPResponse, get, view
+from bottle import post, request, error, HTTPResponse, get, view,route
 from common.pay import *
 from common.sms import *
 
@@ -879,27 +879,32 @@ def api_payssion_notify_url():
 
 
 
-@post('/api/mycard_auth_code/')
+@route('/api/mycard_auth_code/', method=['GET', 'POST'])
 def mycard_auth_code():
-    p = ParamWarper(request)
-    if p.__SandBoxMode=='true':
-        MYCARD_URL = 'https://test.b2b.mycard520.com.tw/MyBillingPay/api/AuthGlobal'
-    else:
-        MYCARD_URL = 'https://b2b.mycard520.com.tw/MyBillingPay/api/AuthGlobal'
-    r=requests.get(MYCARD_URL,
-                 FacServiceId=p.__FacServiceId,
-                 FacTradeSeq=p.__FacTradeSeq,
-                 TradeType=p.__TradeType,
-                 ServerId=p.__ServerId,
-                 CustomerId=p.__CustomerId,
-                 PaymentType=p.__PaymentType,
-                 ItemCode=p.__ItemCode,
-                 ProductName=p.__ProductName,
-                 Amount=p.__Amount,
-                 Currency=p.__USD,
-                 SandBoxMode=p.__SandBoxMode,
-                 Hash=p.__Hash)
-    return HTTPResponse(r.text, content_type="text/xml")
+    try:
+        p = ParamWarper(request)
+        if p.__SandBoxMode=='true':
+            MYCARD_URL = 'https://test.b2b.mycard520.com.tw/MyBillingPay/api/AuthGlobal'
+        else:
+            MYCARD_URL = 'https://b2b.mycard520.com.tw/MyBillingPay/api/AuthGlobal'
+        param={
+            'FacServiceId' : p.__FacServiceId,
+            'FacTradeSeq' : p.__FacTradeSeq,
+            'TradeType' : p.__TradeType,
+            'ServerId' : p.__ServerId,
+            'CustomerId' : p.__CustomerId,
+            'PaymentType' : p.__PaymentType,
+            'ItemCode' : p.__ItemCode,
+            'ProductName' : p.__ProductName,
+            'Amount' : p.__Amount,
+            'Currency' : p.__USD,
+            'SandBoxMode' : p.__SandBoxMode,
+            'Hash' : p.__Hash
+        }
+        r=requests.get(MYCARD_URL,params=param)
+        return HTTPResponse(r.text, content_type="text/xml")
+    except Exception,e:
+        TRACE_ERROR(e)
 
 @post('/api/mycard_notify_url/')
 def mycard_notify_url():

@@ -80,3 +80,14 @@ def TRACE(*args):
         print data
     else:
         LOG.info(data)
+
+
+
+def TRACE_ERROR(e):
+    import traceback
+    TRACE('str(Exception):\t%s', str(Exception))
+    TRACE('str(e):\t\t%s', str(e))
+    TRACE('repr(e):\t%s', repr(e))
+    TRACE('e.message:\t%s', e.message)
+    TRACE('traceback.print_exc():%s', traceback.print_exc())
+    TRACE('traceback.format_exc():\n%s' % traceback.format_exc())
