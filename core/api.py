@@ -891,17 +891,21 @@ def mycard_auth_code():
             'FacServiceId' : p.__FacServiceId,
             'FacTradeSeq' : p.__FacTradeSeq,
             'TradeType' : p.__TradeType,
-            'ServerId' : p.__ServerId,
+            'ServerId' : p.nstr__ServerId,
             'CustomerId' : p.__CustomerId,
-            'PaymentType' : p.__PaymentType,
-            'ItemCode' : p.__ItemCode,
+            'PaymentType' : p.nstr__PaymentType,
+            'ItemCode' : p.nstr__ItemCode,
             'ProductName' : p.__ProductName,
             'Amount' : p.__Amount,
             'Currency' : p.__USD,
             'SandBoxMode' : p.__SandBoxMode,
             'Hash' : p.__Hash
         }
-        r=requests.get(MYCARD_URL,params=param)
+
+        MYCARD_URL+="?FacServiceId={FacServiceId}&FacTradeSeq={FacTradeSeq}&TradeType={TradeType}&ServerId={ServerId}&CustomerId={CustomerId}&PaymentType={PaymentType}&ItemCode={ItemCode}&ProductName={ProductName}&Amount={Amount}&Currency={Currency}&SandBoxMode={SandBoxMode}&Hash={Hash}"
+        MYCARD_URL=MYCARD_URL.format(**param)
+        TRACE("MYCARDURL:",MYCARD_URL)
+        r=requests.get(MYCARD_URL)
         return HTTPResponse(r.text, content_type="text/xml")
     except Exception,e:
         TRACE_ERROR(e)
