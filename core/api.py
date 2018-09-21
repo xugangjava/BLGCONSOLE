@@ -909,27 +909,39 @@ def mycard_auth_code():
     except Exception,e:
         TRACE_ERROR(e)
 
-
-@post('/api/mycard_notify_url/')
+@route('/api/mycard_notify_url/', method=['GET', 'POST'])
 def mycard_notify_url():
     import json
     p = ParamWarper(request)
+    TRACE("MYCARDPARAM:", str(p.params))
     data = p.__DATA
-    data = json.loads(data)
-    ReturnCode = data['ReturnCode']
-    ReturnMsg = data['ReturnMsg']
-    FacServiceId = data['FacServiceId']
-    TotalNum = data['TotalNum']
-    FacTradeSeq = data['FacTradeSeq']
-    TRACE("PARAM", str(data))
-    if ReturnCode == 1:
-        for seq in FacTradeSeq:
-            transaction_id, out_trade_no = seq, seq
-            with DB() as db:
-                db.sql_exec("""
-                    INSERT INTO poker.paycallback
-                    (TRANID, PAYID) 
-                    VALUES ('%s', '%s');
-                """, transaction_id, out_trade_no)
-                db.commit()
-    return HTTPResponse("success", content_type="text/xml")
+    TRACE(data)
+    try:
+        data = json.loads(data)
+        ReturnCode = data['ReturnCode']
+        ReturnMsg = data['ReturnMsg']
+        FacServiceId = data['FacServiceId']
+        TotalNum = data['TotalNum']
+        FacTradeSeq = data['FacTradeSeq']
+        TRACE("PARAM:", str(data))
+        if str(ReturnCode) == '1':
+            for seq in FacTradeSeq:
+                transaction_id, out_trade_no = seq, seq
+                with DB() as db:
+                    db.sql_exec("""
+                        INSERT INTO poker.paycallback
+                        (TRANID, PAYID) 
+                        VALUES ('%s', '%s');
+                    """, transaction_id, out_trade_no)
+                    db.commit()
+        return HTTPResponse("success", content_type="text/xml")
+    except Exception,e:
+        TRACE_ERROR(e)
+        return error(404)
+
+
+@route('/api/mycard_return_url/', method=['GET', 'POST'])
+def mycard_return_url():
+    p = ParamWarper(request)
+    TRACE("REATUNPARAM:", str(p.params))
+    return "請至遊戲內確認點數"
