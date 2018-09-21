@@ -877,71 +877,117 @@ def api_payssion_notify_url():
     return HTTPResponse("success", content_type="text/xml")
 
 
-
 @route('/api/mycard_auth_code/', method=['GET', 'POST'])
 def mycard_auth_code():
     try:
         p = ParamWarper(request)
-        if p.__SandBoxMode=='true':
+        if p.__SandBoxMode == 'true':
             MYCARD_URL = 'https://test.b2b.mycard520.com.tw/MyBillingPay/api/AuthGlobal'
         else:
             MYCARD_URL = 'https://b2b.mycard520.com.tw/MyBillingPay/api/AuthGlobal'
-        param={
-            'FacServiceId' : p.__FacServiceId,
-            'FacTradeSeq' : p.__FacTradeSeq,
-            'TradeType' : p.__TradeType,
-            'ServerId' : p.nstr__ServerId,
-            'CustomerId' : p.__CustomerId,
-            'PaymentType' : p.nstr__PaymentType,
-            'ItemCode' : p.nstr__ItemCode,
-            'ProductName' : p.__ProductName,
-            'Amount' : p.__Amount,
-            'Currency' : p.__Currency,
-            'SandBoxMode' : p.__SandBoxMode,
-            'Hash' : p.__Hash
+        param = {
+            'FacServiceId': p.__FacServiceId,
+            'FacTradeSeq': p.__FacTradeSeq,
+            'TradeType': p.__TradeType,
+            'ServerId': p.nstr__ServerId,
+            'CustomerId': p.__CustomerId,
+            'PaymentType': p.nstr__PaymentType,
+            'ItemCode': p.nstr__ItemCode,
+            'ProductName': p.__ProductName,
+            'Amount': p.__Amount,
+            'Currency': p.__Currency,
+            'SandBoxMode': p.__SandBoxMode,
+            'Hash': p.__Hash
         }
 
-        MYCARD_URL+="?FacServiceId={FacServiceId}&FacTradeSeq={FacTradeSeq}&TradeType={TradeType}&ServerId={ServerId}&CustomerId={CustomerId}&PaymentType={PaymentType}&ItemCode={ItemCode}&ProductName={ProductName}&Amount={Amount}&Currency={Currency}&SandBoxMode={SandBoxMode}&Hash={Hash}"
-        MYCARD_URL=MYCARD_URL.format(**param)
-        TRACE("MYCARDURL:",MYCARD_URL)
-        r=requests.get(MYCARD_URL)
+        MYCARD_URL += "?FacServiceId={FacServiceId}&FacTradeSeq={FacTradeSeq}&TradeType={TradeType}&ServerId={ServerId}&CustomerId={CustomerId}&PaymentType={PaymentType}&ItemCode={ItemCode}&ProductName={ProductName}&Amount={Amount}&Currency={Currency}&SandBoxMode={SandBoxMode}&Hash={Hash}"
+        MYCARD_URL = MYCARD_URL.format(**param)
+        TRACE("MYCARDURL:", MYCARD_URL)
+        r = requests.get(MYCARD_URL)
         return HTTPResponse(r.text, content_type="text/xml")
-    except Exception,e:
+    except Exception, e:
         TRACE_ERROR(e)
+
 
 @route('/api/mycard_notify_url/', method=['GET', 'POST'])
 def mycard_notify_url():
-    import json
-    p = ParamWarper(request)
-    TRACE("MYCARDPARAM:", str(p.params))
-    data = p.__DATA
-    TRACE(data)
-    try:
-        data = json.loads(data)
-        ReturnCode = data['ReturnCode']
-        ReturnMsg = data['ReturnMsg']
-        FacServiceId = data['FacServiceId']
-        TotalNum = data['TotalNum']
-        FacTradeSeq = data['FacTradeSeq']
-        TRACE("PARAM:", str(data))
-        if str(ReturnCode) == '1':
-            for seq in FacTradeSeq:
-                transaction_id, out_trade_no = seq, seq
-                with DB() as db:
-                    db.sql_exec("""
-                        INSERT INTO poker.paycallback
-                        (TRANID, PAYID) 
-                        VALUES ('%s', '%s');
-                    """, transaction_id, out_trade_no)
-                    db.commit()
-        return HTTPResponse("success", content_type="text/xml")
-    except Exception,e:
-        TRACE_ERROR(e)
-        return error(404)
+    return HTTPResponse("success", content_type="text/xml")
+
+    # import json
+    # p = ParamWarper(request)
+    # TRACE("MYCARDPARAM:", str(p.params))
+    # data = p.__DATA
+    # TRACE(data)
+    # try:
+    #     data = json.loads(data)
+    #     ReturnCode = data['ReturnCode']
+    #     ReturnMsg = data['ReturnMsg']
+    #     FacServiceId = data['FacServiceId']
+    #     TotalNum = data['TotalNum']
+    #     FacTradeSeq = data['FacTradeSeq']
+    #     TRACE("PARAM:", str(data))
+    #     if str(ReturnCode) == '1':
+    #         for seq in FacTradeSeq:
+    #             transaction_id, out_trade_no = seq, seq
+    #             with DB() as db:
+    #                 db.sql_exec("""
+    #                     INSERT INTO poker.paycallback
+    #                     (TRANID, PAYID)
+    #                     VALUES ('%s', '%s');
+    #                 """, transaction_id, out_trade_no)
+    #                 db.commit()
+    #     return HTTPResponse("success", content_type="text/xml")
+    # except Exception,e:
+    #     TRACE_ERROR(e)
+    #     return error(404)
+
+
+
 
 
 @route('/api/mycard_return_url/', method=['GET', 'POST'])
 def mycard_return_url():
+    import hashlib
     p = ParamWarper(request)
-    TRACE("REATUNPARAM:", str(p.params))
-    return "請至遊戲內確認點數"
+    MYCARDKEY = "At4qwWinp0cHizEmmX2qZPWW0jX0gXrl"
+    # {'FacTradeSeq': '5qA6rmrVipdkixClEoXH',
+    # 'ReturnCode': '1',
+    # 'Hash': 'be69e32e03a4fbb949bf64c6dc76f9500cbea1f2a562adae61ac2b4eba805759',
+    # 'PaymentType': 'COSTPOINT',
+    # 'PromoCode': 'A0000',
+    # 'Amount': '4.99',
+    # 'submit1': 'Click here to continue if you are not automatically redirected.',
+    #  'Currency': 'USD', 'MyCardTradeNo': 'MMS1809210000151021',
+    # 'PayResult': '3',
+    # 'ReturnMsg': '%e7%b6%b2%e7%ab%99%e5%85%a7%e5%ae%b9%e5%95%8f%e9%a1%8c%e8%ab%8b%e6%b4%bd%e7%b6%b2%e7%ab%99%e5%ae%a2%e6%9c%8d%ef%bc%8c%e8%8b%a5%e7%82%ba%e4%ba%a4%e6%98%93%e5%95%8f%e9%a1%8c%e8%ab%8b%e6%92%a5%e6%89%93(02)26510754%e2%80%a7',
+    # 'SerialId': '', 'MyCardType': ''}
+    FacTradeSeq = p.__FacTradeSeq
+    ReturnCode = p.__ReturnCode
+    Hash = p.__Hash
+    PaymentType = p.__PaymentType
+    PromoCode = p.__PromoCode
+    Amount = p.__Amount
+    Currency = p.__Currency
+    PayResult = p.__PayResult
+    ReturnMsg = p.__ReturnMsg
+    MyCardTradeNo=p.__MyCardTradeNo
+    MyCardType=p.__MyCardType
+    PreHashValue = ReturnCode + PayResult + FacTradeSeq + PaymentType + Amount + Currency \
+                   + MyCardTradeNo + MyCardType + PromoCode + MYCARDKEY
+    sha256=hashlib.sha256()
+    sha256.update(encode_url(PreHashValue))
+    PreHashValue = sha256.hexdigest()
+    if PreHashValue!=Hash:
+        TRACE("HASH:",Hash)
+        TRACE("PreHashValue:", PreHashValue)
+        return "签名验证错误,请联系客服"
+    transaction_id, out_trade_no=FacTradeSeq,MyCardTradeNo
+    if ReturnCode=="1":
+        with DB() as db:
+            db.sql_exec("""
+                                INSERT INTO poker.paycallback
+                                (TRANID, PAYID) 
+                                VALUES ('%s', '%s');
+                            """, transaction_id, out_trade_no)
+            db.commit()
+    return ReturnMsg
