@@ -157,6 +157,7 @@ Ext.onReady(function () {
                                         [false, '否']
                                     ]
                                 },
+                                {fieldLabel: 'MYCARD', name: 'OPEN_MY_CARD_PAY', value: 0},
                                 {fieldLabel: '语言编号', name: 'LAN_ID', value: '41'},
                                 {fieldLabel: '升级包名', name: 'UPDATE_LINK',allowBlank:true}
                             ],
@@ -190,7 +191,8 @@ Ext.onReady(function () {
                     {header: '是否审核', dataIndex: 'IS_APPROVE', width: 80, renderer: yesno},
                     {header: '备注信息', dataIndex: 'remark', width: 120},
                     {header: '渠道ID', dataIndex: 'CID', width: 120},
-                    {header: '语言ID', dataIndex: 'LAN_ID', width: 120}
+                    {header: '语言ID', dataIndex: 'LAN_ID', width: 120},
+                    {header: 'OPEN_MY_CARD_PAY', dataIndex: 'OPEN_MY_CARD_PAY', width: 120},
                 ]
             }
         }, {
