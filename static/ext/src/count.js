@@ -11,7 +11,7 @@ Ext.onReady(function () {
     var app_analysis_store = new Ext.data.JsonStore({
         fields: ['LOG_TIME', 'LOGIN_COUNT', 'REG_COUNT', 'ACTVIE_COUNT',
             'TOTAL_PAY', 'PAY_COUNT', 'D2_LEAVE_RATE', 'PAY_RATE',
-            'D2_LEAVE_RATE_V','PAY_RATE_V',
+            'D2_LEAVE_RATE_V', 'PAY_RATE_V',
             'ARPU', 'ARPPU'],
         root: 'items',
         autoLoad: true,
@@ -25,6 +25,16 @@ Ext.onReady(function () {
         autoLoad: true,
         url: '/blg/game_chips_count_list/?chart=1'
     });
+
+
+
+    var game_chips_send_count = new Ext.data.JsonStore({
+        fields: ['TIM', 'COUNTS', 'ID'],
+        root: 'items',
+        autoLoad: true,
+        url: '/blg/gm_send_chips_count/?chart=1'
+    });
+
 
     var pay_log_grid = Ext.id(),
         active_log_search_form = Ext.id(),
@@ -281,35 +291,102 @@ Ext.onReady(function () {
                     {header: '在线人数', dataIndex: 'ONLINE_COUNT', width: 120}
                 ]
             }
-        },{
+        }, {
             text: '筹码发放统计',
             leaf: true,
             iconCls: 'Bulletright',
             view: {
-                xtype: 'basegrid',
-                action: '/blg/gm_send_chips_count/',
-                flex: 4,
-                id: 'chips_send_grid',
-                nopadding: false,
-                columes: [
-                    {header: '日期', dataIndex: 'TIM', width: 200},
-                    {header: '筹码', dataIndex: 'COUNTS', width: 200},
-                    {header: '原因', dataIndex: 'REASON', width: 200},
-                    {header: '统计人数', dataIndex: 'USR_COUNT', width: 200},
-                    {
-                        header: '平均',
-                        dataIndex: 'USR_COUNT',
-                        width: 120,
-                        renderer: function (value, cellmeta, record, rowIndex, columnIndex, store) {
-                            var data = record.data, USR_COUNT = data['USR_COUNT'], COUNTS = data['COUNTS'];
-                            if (!USR_COUNT) {
-                                return 0;
+                xtype: 'panel',
+                layout: {
+                    type: 'vbox',
+                    padding: '1',
+                    align: 'stretch'
+                },
+                border: false,
+                flex: 8,
+                tbar: [{
+                    text: '刷新',
+                    iconCls: 'Databaserefresh',
+                    handler: function () {
+                        game_chips_send_count.reload();
+                        var grid = Ext.getCmp('chips_send_grid');
+                        grid.reload();
+                    }
+                }],
+                items: [{
+                    xtype: 'form',
+                    flex: 3,
+                    padding: 10,
+                    id: 'chips_send_grid_form',
+                    items: [
+                        {fieldLabel: '开始时间', xtype: 'datefield', name: 'start_time', format: 'Y-m-d'},
+                        {fieldLabel: '结束时间', xtype: 'datefield', name: 'end_time', format: 'Y-m-d'},
+                    ],
+                    buttons: [{
+                        iconCls: 'Databaseedit',
+                        text: '查询',
+                        handler: function () {
+                            var form = Ext.getCmp('chips_send_grid_form');
+                            var json = form.getForm().getValues();
+                            var grid = Ext.getCmp('chips_send_grid');
+                            game_chips_send_count.load({
+                                params: json
+                            });
+                            grid.search(json);
+                        }
+                    }]
+                }, {
+                    xtype: 'linechart',
+                    store: game_chips_send_count,
+                    url: '/static/ext/resources/charts.swf',
+                    xField: 'TIM',
+                    flex: 3,
+                    series: [
+                        {type: 'line', displayName: '筹码总发放', yField: 'COUNTS', style: {color: 0xF79709}}
+                    ],
+                    extraStyle: {
+                        legend: {
+                            display: 'bottom',
+                            padding: 5,
+                            font: {
+                                family: 'Tahoma',
+                                size: 13
                             }
-                            var r = COUNTS * 1.0 / USR_COUNT;
-                            return r.toFixed(2);
+                        }
+                    },
+                    listeners: {
+                        itemclick: function (o) {
+                            var rec = store.getAt(o.index);
+                            Ext.example.msg('详细信息', '{0}.', rec.get('name'));
                         }
                     }
-                ]
+                }, {
+                    xtype: 'basegrid',
+                    action: '/blg/gm_send_chips_count/',
+                    flex: 4,
+                    id: 'chips_send_grid',
+                    pagesize: 11,
+                    nopadding: false,
+                    columes: [
+                        {header: '日期', dataIndex: 'TIM', width: 200},
+                        {header: '筹码', dataIndex: 'COUNTS', width: 200},
+                        {header: '原因', dataIndex: 'REASON', width: 200},
+                        {header: '统计人数', dataIndex: 'USR_COUNT', width: 200},
+                        {
+                            header: '平均',
+                            dataIndex: 'USR_COUNT',
+                            width: 120,
+                            renderer: function (value, cellmeta, record, rowIndex, columnIndex, store) {
+                                var data = record.data, USR_COUNT = data['USR_COUNT'], COUNTS = data['COUNTS'];
+                                if (!USR_COUNT) {
+                                    return 0;
+                                }
+                                var r = COUNTS * 1.0 / USR_COUNT;
+                                return r.toFixed(2);
+                            }
+                        }
+                    ]
+                }]
             }
         }, {
             text: '玩家筹码统计',
@@ -418,7 +495,7 @@ Ext.onReady(function () {
                         {fieldLabel: '用户ID', name: 'UserID', xtype: 'numberfield'},
                         {fieldLabel: '用户名', name: 'UserName'},
                         {fieldLabel: '昵称', name: 'NickName'},
-                        {fieldLabel: '渠道', xtype: 'remotecombo',name: 'Channel', url: '/blg/combo_channel/' }
+                        {fieldLabel: '渠道', xtype: 'remotecombo', name: 'Channel', url: '/blg/combo_channel/'}
                     ],
                     buttons: [{
                         text: '重置查询条件',

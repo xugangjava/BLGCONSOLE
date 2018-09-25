@@ -115,7 +115,7 @@ function getObjectById(id, url, func) {
 Ext.ns("XG.Control.AbstractGrid");
 XG.Control.AbstractGrid = Ext.extend(Ext.grid.GridPanel, {
     constructor: function(config) {
-        var itemsPerPage = 20;
+        var itemsPerPage =config.pagesize?config.pagesize: 20;
         var stroe_fields = ['pk'];
         var columes = config.columes;
         var tbar = [];

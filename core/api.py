@@ -436,6 +436,7 @@ def api_get_pay_way():
     open_wx_pay = 1
     open_ali_pay = 1
     open_orgin_play = 1
+    open_my_card_pay = 0
     platform = ''
     try:
         with DB() as db:
@@ -452,6 +453,7 @@ def api_get_pay_way():
             open_wx_pay = r['open_wx_pay']
             open_ali_pay = r['open_ali_pay']
             open_orgin_play = r['open_orgin_play']
+            open_my_card_pay = r['open_my_card_pay']
         app_id = r2['app_id']
         if r and r.get('IS_APPROVE') == 0:
             # 国内ip 渠道非审核状态
@@ -465,13 +467,13 @@ def api_get_pay_way():
     # google
     if platform == 'ANDROID':
         ios_pay = False
-
     return Success(P="I" if ios_pay else "W",
                    A=app_id,
                    SEX=show_ex,
                    OPWX=open_wx_pay,
                    OPAL=open_ali_pay,
-                   OPOP=open_orgin_play
+                   OPOP=open_orgin_play,
+                   OPMY=open_my_card_pay
                    )
 
 
@@ -990,4 +992,48 @@ def mycard_return_url():
         return str(ReturnCode)
     except Exception,e:
         TRACE_ERROR(e)
-        return "ERROR:请联系客服"
+        return "ERROR:请联系客服"    import hashlib
+    p = ParamWarper(request)
+    MYCARDKEY = "At4qwWinp0cHizEmmX2qZPWW0jX0gXrl"
+    # {'FacTradeSeq': '5qA6rmrVipdkixClEoXH',
+    # 'ReturnCode': '1',
+    # 'Hash': 'be69e32e03a4fbb949bf64c6dc76f9500cbea1f2a562adae61ac2b4eba805759',
+    # 'PaymentType': 'COSTPOINT',
+    # 'PromoCode': 'A0000',
+    # 'Amount': '4.99',
+    # 'submit1': 'Click here to continue if you are not automatically redirected.',
+    #  'Currency': 'USD', 'MyCardTradeNo': 'MMS1809210000151021',
+    # 'PayResult': '3',
+    # 'ReturnMsg': '%e7%b6%b2%e7%ab%99%e5%85%a7%e5%ae%b9%e5%95%8f%e9%a1%8c%e8%ab%8b%e6%b4%bd%e7%b6%b2%e7%ab%99%e5%ae%a2%e6%9c%8d%ef%bc%8c%e8%8b%a5%e7%82%ba%e4%ba%a4%e6%98%93%e5%95%8f%e9%a1%8c%e8%ab%8b%e6%92%a5%e6%89%93(02)26510754%e2%80%a7',
+    # 'SerialId': '', 'MyCardType': ''}
+    FacTradeSeq = p.__FacTradeSeq
+    ReturnCode = p.__ReturnCode
+    Hash = p.__Hash
+    PaymentType = p.__PaymentType
+    PromoCode = p.__PromoCode
+    Amount = p.__Amount
+    Currency = p.__Currency
+    PayResult = p.__PayResult
+    ReturnMsg = p.__ReturnMsg
+    MyCardTradeNo = p.__MyCardTradeNo
+    MyCardType = p.__MyCardType
+    PreHashValue = ReturnCode + PayResult + FacTradeSeq + PaymentType + Amount + Currency \
+                   + MyCardTradeNo + MyCardType + PromoCode + MYCARDKEY
+    sha256 = hashlib.sha256()
+    sha256.update(encode_url(PreHashValue))
+    PreHashValue = sha256.hexdigest()
+    if PreHashValue != Hash:
+        TRACE("HASH:", Hash)
+        TRACE("PreHashValue:", PreHashValue)
+        return "签名验证错误,请联系客服"
+    transaction_id, out_trade_no = FacTradeSeq, MyCardTradeNo
+    if ReturnCode == "1":
+        with DB() as db:
+            db.sql_exec("""
+                                INSERT INTO poker.paycallback
+                                (TRANID, PAYID) 
+                                VALUES ('%s', '%s');
+                            """, transaction_id, out_trade_no)
+            db.commit()
+    return ReturnMsg
+>>>>>>> 50c93df858dbb7f594f95e36dfd884bf49511c75
