@@ -985,8 +985,8 @@ def mycard_return_url():
                 """, transaction_id, out_trade_no)
                 db.commit()
         if str(ReturnCode)=="1":
-            return '购买成功,请回到游戏总确认金额'
-        return '购买失败,如已付款请将订单号系客服'
+            return '购买成功,请回到游戏确认'
+        return '购买失败,请联系客服'
     except Exception,e:
         TRACE_ERROR(e)
-        return '购买失败,如已付款请将订单号系客服'
+        return '购买失败,请联系客服'

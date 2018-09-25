@@ -175,7 +175,7 @@ XG.Control.AbstractGrid = Ext.extend(Ext.grid.GridPanel, {
         this.cm = new Ext.grid.ColumnModel(data_columes);
         this.region = 'center';
         this.autoExpandColumn = autoExpandColumn;
-        this.viewConfig = {
+        config.viewConfig = {
             //  forceFit:true,
             stripeRows: true,
             enableTextSelection: true
