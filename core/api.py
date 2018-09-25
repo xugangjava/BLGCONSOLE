@@ -443,7 +443,7 @@ def api_get_pay_way():
             # r = db.sql_dict("select level from usr where usrid=%d;", p.uid)
             # if r['level'] < 5:
             #     return Success(PAY_WAY='IOS')
-            r = db.sql_dict(""" select v.IS_APPROVE,c.open_wx_pay,c.open_ali_pay,c.open_orgin_play,c.platform
+            r = db.sql_dict(""" select v.IS_APPROVE,c.open_wx_pay,c.open_ali_pay,c.open_orgin_play,c.open_my_card_pay, c.platform
                                     from channel_version v 
                                     left join channel c on v.CHANNEL_ID=c.ID 
                                     where c.NO='%s' and v.NAME='%s'; """, game_no, version)
