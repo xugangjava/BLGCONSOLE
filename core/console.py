@@ -957,10 +957,10 @@ def gm_send_chips_count():
     if p.__chart:
         start, limit = 0, 90
         condition.append("REASON= ''筹码总发放''")
-        orderBy = "TIM ASC",
+        orderBy = "TIM "
     else:
         start, limit = p.int__start, p.int__limit
-        orderBy = "TIM DESC,COUNTS ASC",
+        orderBy = "TIM DESC,COUNTS ASC"
     if p.__start_time:
         condition.append("TIM > ''%s''" % p.__start_time)
     if p.__end_time:
