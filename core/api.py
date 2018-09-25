@@ -944,9 +944,6 @@ def mycard_notify_url():
     #     return error(404)
 
 
-
-
-
 @route('/api/mycard_return_url/', method=['GET', 'POST'])
 def mycard_return_url():
     try:
@@ -993,6 +990,7 @@ def mycard_return_url():
     except Exception,e:
         TRACE_ERROR(e)
         return "ERROR:请联系客服"    import hashlib
+    import hashlib
     p = ParamWarper(request)
     MYCARDKEY = "At4qwWinp0cHizEmmX2qZPWW0jX0gXrl"
     # {'FacTradeSeq': '5qA6rmrVipdkixClEoXH',
