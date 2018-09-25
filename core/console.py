@@ -214,7 +214,6 @@ def do_del_user_info():
     return SUCCESS
 
 
-
 @login_require
 @post('/blg/do_send_user_email/')
 def do_send_user_email():
@@ -603,7 +602,7 @@ def do_edit_version():
                 UPDATE poker.channel_version 
         SET NAME = '%s' , IS_APPROVE = %d, CHANNEL_ID = %d, LAN_ID = %d ,UPDATE_LINK='%s'
         WHERE id=%d-- Please complete
-        ; """, p.str__VNAME, 1 if p.__IS_APPROVE == 'true' else 0, p.int__CID, p.int__LAN_ID,p.__UPDATE_LINK, p.__pk)
+        ; """, p.str__VNAME, 1 if p.__IS_APPROVE == 'true' else 0, p.int__CID, p.int__LAN_ID, p.__UPDATE_LINK, p.__pk)
         db.commit()
     return SUCCESS
 
@@ -631,7 +630,6 @@ def race_lamp_list():
         """)
 
 
-
 @login_require
 @post('/blg/do_add_race_lamp/')
 def do_add_race_lamp():
@@ -653,7 +651,7 @@ def do_add_race_lamp():
               ,'admin' -- handler - IN varchar(255)
               ,'%s'
             )
-        """, p.__repeatcount, p.__repeatgap, p.__content,p.__en_content)
+        """, p.__repeatcount, p.__repeatgap, p.__content, p.__en_content)
         db.commit()
     return SUCCESS
 
@@ -755,8 +753,8 @@ def _cmp_game_count(rs):
         # 付费率
         r['PAY_RATE_V'] = 0
         if r['LOGIN_COUNT']:
-            r['PAY_RATE'] = str(round(r['PAY_COUNT'] * 1.0 / r['LOGIN_COUNT'], 3) * 100)+'%'
-            r['PAY_RATE_V']=round(r['PAY_COUNT'] * 1.0 / r['LOGIN_COUNT'], 3) * 100
+            r['PAY_RATE'] = str(round(r['PAY_COUNT'] * 1.0 / r['LOGIN_COUNT'], 3) * 100) + '%'
+            r['PAY_RATE_V'] = round(r['PAY_COUNT'] * 1.0 / r['LOGIN_COUNT'], 3) * 100
         else:
             r['PAY_RATE'] = "0%"
 
@@ -777,8 +775,8 @@ def _cmp_game_count(rs):
 @route('/blg/game_count_list/', method=['GET', 'POST'])
 def game_count_list():
     p = ParamWarper(request)
-    c=[]
-    ORDER="DESC"
+    c = []
+    ORDER = "DESC"
     if not p.__chart:
         start, limit = p.int__start, p.int__limit
     else:
@@ -803,7 +801,7 @@ def game_count_list():
                 YESTODAY_LOGIN,
                 YESTODAY_REG
             """,
-            orderBy="ID "+ORDER,
+            orderBy="ID " + ORDER,
             condition='AND'.join(c)
         )
     _cmp_game_count(rs)
@@ -906,6 +904,7 @@ def game_chips_count_list():
             condition='AND'.join(c)
         )
 
+
 @login_require
 @route('/blg/game_play_info/', method=['GET', 'POST'])
 def game_play_info():
@@ -918,7 +917,7 @@ def game_play_info():
     if p.__NickName:
         condition.append("`usr`.`nickname` LIKE ''%%" + p.trim__NickName + "%%''")
     if p.__Channel:
-        condition.append("`c`.`ID`=" +str( p.int__Channel))
+        condition.append("`c`.`ID`=" + str(p.int__Channel))
     with DB() as db:
         return db.sql_padding(
             start=p.int__start,
@@ -952,12 +951,23 @@ def game_play_info():
 @login_require
 @route('/blg/gm_send_chips_count/', method=['GET', 'POST'])
 def gm_send_chips_count():
-    p=ParamWarper(request)
+    p = ParamWarper(request)
+    condition=[]
+    if p.__chart:
+        start, limit = 0, 90
+        condition.append("REASON= ''筹码总发放''")
+    else:
+        start, limit = p.int__start, p.int__limit
+    if p.__start_time:
+        condition.append("TIM > ''%s''" % p.__start_time)
+    if p.__end_time:
+        condition.append("TIM < ''%s''" % p.__end_time)
     with DB() as db:
         return db.sql_padding(
-            start=p.int__start,
-            limit=p.int__limit,
+            start=start,
+            limit=limit,
             tbName="poker.gm_send_chips_count",
             columNames="""*""",
-            orderBy="TIM DESC,COUNTS ASC"
+            orderBy="TIM DESC,COUNTS ASC",
+            condition=' AND '.join(condition)
         )

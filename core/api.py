@@ -436,6 +436,7 @@ def api_get_pay_way():
     open_wx_pay = 1
     open_ali_pay = 1
     open_orgin_play = 1
+    open_my_card_pay = 0
     platform = ''
     try:
         with DB() as db:
@@ -452,6 +453,7 @@ def api_get_pay_way():
             open_wx_pay = r['open_wx_pay']
             open_ali_pay = r['open_ali_pay']
             open_orgin_play = r['open_orgin_play']
+            open_my_card_pay = r['open_my_card_pay']
         app_id = r2['app_id']
         if r and r.get('IS_APPROVE') == 0:
             # 国内ip 渠道非审核状态
@@ -465,13 +467,13 @@ def api_get_pay_way():
     # google
     if platform == 'ANDROID':
         ios_pay = False
-
     return Success(P="I" if ios_pay else "W",
                    A=app_id,
                    SEX=show_ex,
                    OPWX=open_wx_pay,
                    OPAL=open_ali_pay,
-                   OPOP=open_orgin_play
+                   OPOP=open_orgin_play,
+                   OPMY=open_my_card_pay
                    )
 
 
@@ -942,9 +944,6 @@ def mycard_notify_url():
     #     return error(404)
 
 
-
-
-
 @route('/api/mycard_return_url/', method=['GET', 'POST'])
 def mycard_return_url():
     import hashlib
@@ -970,19 +969,19 @@ def mycard_return_url():
     Currency = p.__Currency
     PayResult = p.__PayResult
     ReturnMsg = p.__ReturnMsg
-    MyCardTradeNo=p.__MyCardTradeNo
-    MyCardType=p.__MyCardType
+    MyCardTradeNo = p.__MyCardTradeNo
+    MyCardType = p.__MyCardType
     PreHashValue = ReturnCode + PayResult + FacTradeSeq + PaymentType + Amount + Currency \
                    + MyCardTradeNo + MyCardType + PromoCode + MYCARDKEY
-    sha256=hashlib.sha256()
+    sha256 = hashlib.sha256()
     sha256.update(encode_url(PreHashValue))
     PreHashValue = sha256.hexdigest()
-    if PreHashValue!=Hash:
-        TRACE("HASH:",Hash)
+    if PreHashValue != Hash:
+        TRACE("HASH:", Hash)
         TRACE("PreHashValue:", PreHashValue)
         return "签名验证错误,请联系客服"
-    transaction_id, out_trade_no=FacTradeSeq,MyCardTradeNo
-    if ReturnCode=="1":
+    transaction_id, out_trade_no = FacTradeSeq, MyCardTradeNo
+    if ReturnCode == "1":
         with DB() as db:
             db.sql_exec("""
                                 INSERT INTO poker.paycallback
