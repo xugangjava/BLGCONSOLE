@@ -440,8 +440,6 @@ def api_get_pay_way():
     platform = ''
     try:
         with DB() as db:
-            # r = db.sql_dict("select level from usr where usrid=%d;", p.uid)
-            # if r['level'] < 5:
             #     return Success(PAY_WAY='IOS')
             r = db.sql_dict(""" select v.IS_APPROVE,c.open_wx_pay,c.open_ali_pay,c.open_orgin_play,v.OPEN_MY_CARD_PAY, c.platform
                                     from channel_version v 
@@ -450,6 +448,7 @@ def api_get_pay_way():
             r2 = db.sql_dict("""
                 select app_id from channel where NO='%s';
             """, game_no)
+            r3 = db.sql_dict("select level from usr where usrid=%d;", p.uid)
             open_wx_pay = r['open_wx_pay']
             open_ali_pay = r['open_ali_pay']
             open_orgin_play = r['open_orgin_play']
@@ -459,8 +458,11 @@ def api_get_pay_way():
             # 国内ip 渠道非审核状态
             ios_pay = False
         platform = r['platform']
+        if r3['level'] < 5:
+            open_my_card_pay = 0
     except:
         ios_pay = True
+        open_my_card_pay=0
         # LOG.exception('-------------api_get_pay_way--------------')
     if not open_wx_pay and not open_wx_pay:
         ios_pay = True
