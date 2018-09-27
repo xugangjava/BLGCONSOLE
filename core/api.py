@@ -881,7 +881,7 @@ def api_payssion_notify_url():
     return HTTPResponse("success", content_type="text/xml")
 
 
-@route('/api/mycard_auth_code/', method=['GET', 'POST'])
+@route('/api/my_auth_code/', method=['GET', 'POST'])
 def mycard_auth_code():
     try:
         p = ParamWarper(request)
