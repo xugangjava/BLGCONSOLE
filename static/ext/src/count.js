@@ -365,7 +365,7 @@ Ext.onReady(function () {
                     action: '/blg/gm_send_chips_count/',
                     flex: 4,
                     id: 'chips_send_grid',
-                    pagesize: 11,
+                    pagesize: 12,
                     nopadding: false,
                     columes: [
                         {header: '日期', dataIndex: 'TIM', width: 200},
