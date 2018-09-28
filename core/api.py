@@ -953,7 +953,7 @@ def mycard_return_url():
         def none_str(v):
             if v is None:return ''
             return str(v)
-        import hashlib
+        import hashlib,urllib
         p = ParamWarper(request)
         TRACE("NOTIFY MYCARD:",str(p.params))
         MYCARDKEY = "At4qwWinp0cHizEmmX2qZPWW0jX0gXrl"
@@ -986,9 +986,9 @@ def mycard_return_url():
                     VALUES ('%s', '%s');
                 """, transaction_id, out_trade_no)
                 db.commit()
-        if str(ReturnCode)=="1":
-            return '购买成功,请回到游戏确认'
-        return '购买失败,请联系客服'
+        # if str(ReturnCode)=="1":
+        #     return '购买成功,请回到游戏确认'
+        return urllib.unquote(str(ReturnMsg).decode('gbk','replace'))
     except Exception,e:
         TRACE_ERROR(e)
         return '购买失败,请联系客服'
