@@ -528,6 +528,17 @@ def api_pay_config():
     return {'data': rs, 'success': True, "fp": fp}
 
 
+@post('/api/pay_config_tw/')
+def api_pay_config():
+    from sitecustomize import CUR_SERVER_ADDRESS
+    p = ParamWarper(request)
+    if not p.uid: return TOKEN_ERROR
+    with DB() as db:
+        r = db.sql_dict("select moneyconsume from usr where usrid=%d", p.uid)
+        fp = 1 if r['moneyconsume'] == 0 else 0
+        rs = db.sql_dict_array("select * from payconfig")
+    return {'data': rs, 'success': True, "fp": fp}
+
 ####################################################
 # 兑换
 
