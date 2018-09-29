@@ -538,6 +538,7 @@ def api_pay_config_tw():
         r = db.sql_dict("select moneyconsume from usr where usrid=%d ", p.uid)
         fp = 1 if r['moneyconsume'] == 0 else 0
         rs = db.sql_dict_array("select * from payconfig ORDER  by USD")
+    if fp == 0: rs = [r for r in rs if r['PAYID'] != FISRT_PLAY_ID]
     return {'data': rs, 'success': True, "fp": fp}
 
 
