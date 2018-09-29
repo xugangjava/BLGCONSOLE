@@ -529,7 +529,7 @@ def api_pay_config():
 
 
 @post('/api/pay_config_tw/')
-def api_pay_config():
+def api_pay_config_tw():
     from sitecustomize import CUR_SERVER_ADDRESS
     p = ParamWarper(request)
     if not p.uid: return TOKEN_ERROR
