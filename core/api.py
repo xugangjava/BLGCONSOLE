@@ -462,7 +462,7 @@ def api_get_pay_way():
             open_my_card_pay = 0
     except:
         ios_pay = True
-        open_my_card_pay=0
+        open_my_card_pay = 0
         # LOG.exception('-------------api_get_pay_way--------------')
     if not open_wx_pay and not open_wx_pay:
         ios_pay = True
@@ -510,7 +510,8 @@ def api_get_lan_code():
             'USD': 6.8
         }
 
-    return Success(RID=lan_id, AP=r['IS_APPROVE'], USD=USD_CACHE['USD'], ID=r['jump_url'] if r['open_jump'] else '')
+    return Success(RID=lan_id, AP=r['IS_APPROVE'], USD=USD_CACHE['USD'], NT=4.433,
+                   ID=r['jump_url'] if r['open_jump'] else '')
 
 
 @post('/api/pay_config/')
@@ -534,10 +535,11 @@ def api_pay_config_tw():
     p = ParamWarper(request)
     if not p.uid: return TOKEN_ERROR
     with DB() as db:
-        r = db.sql_dict("select moneyconsume from usr where usrid=%d", p.uid)
+        r = db.sql_dict("select moneyconsume from usr where usrid=%d ", p.uid)
         fp = 1 if r['moneyconsume'] == 0 else 0
-        rs = db.sql_dict_array("select * from payconfig")
+        rs = db.sql_dict_array("select * from payconfig ORDER  by USD")
     return {'data': rs, 'success': True, "fp": fp}
+
 
 ####################################################
 # 兑换
@@ -961,12 +963,14 @@ def mycard_notify_url():
 def mycard_return_url():
     try:
         TRACE("NOTIFY MYCARD============")
+
         def none_str(v):
-            if v is None:return ''
+            if v is None: return ''
             return str(v)
-        import hashlib,urllib
+
+        import hashlib, urllib
         p = ParamWarper(request)
-        TRACE("NOTIFY MYCARD:",str(p.params))
+        TRACE("NOTIFY MYCARD:", str(p.params))
         MYCARDKEY = "At4qwWinp0cHizEmmX2qZPWW0jX0gXrl"
         FacTradeSeq = p.__FacTradeSeq
         ReturnCode = p.__ReturnCode
@@ -977,19 +981,20 @@ def mycard_return_url():
         Currency = p.__Currency
         PayResult = p.__PayResult
         ReturnMsg = p.__ReturnMsg
-        MyCardTradeNo=p.__MyCardTradeNo
-        MyCardType=p.__MyCardType
-        PreHashValue = none_str(ReturnCode) + none_str(PayResult) + none_str(FacTradeSeq) + none_str(PaymentType) + none_str(Amount) + none_str(Currency) \
+        MyCardTradeNo = p.__MyCardTradeNo
+        MyCardType = p.__MyCardType
+        PreHashValue = none_str(ReturnCode) + none_str(PayResult) + none_str(FacTradeSeq) + none_str(
+            PaymentType) + none_str(Amount) + none_str(Currency) \
                        + none_str(MyCardTradeNo) + none_str(MyCardType) + none_str(PromoCode) + MYCARDKEY
-        sha256=hashlib.sha256()
+        sha256 = hashlib.sha256()
         sha256.update(encode_url(PreHashValue))
         PreHashValue = sha256.hexdigest()
-        if PreHashValue!=Hash:
-            TRACE("HASH:",Hash)
+        if PreHashValue != Hash:
+            TRACE("HASH:", Hash)
             TRACE("PreHashValue:", PreHashValue)
             return "签名验证错误,请联系客服"
-        transaction_id, out_trade_no=MyCardTradeNo,FacTradeSeq
-        if str(ReturnCode)=="1":
+        transaction_id, out_trade_no = MyCardTradeNo, FacTradeSeq
+        if str(ReturnCode) == "1":
             with DB() as db:
                 db.sql_exec("""
                     INSERT INTO poker.paycallback
@@ -997,10 +1002,10 @@ def mycard_return_url():
                     VALUES ('%s', '%s');
                 """, transaction_id, out_trade_no)
                 db.commit()
-        if str(ReturnCode)=="1":
+        if str(ReturnCode) == "1":
             return '购买成功,请回到游戏确认'
-        TRACE("ReturnMsg:",ReturnMsg)
+        TRACE("ReturnMsg:", ReturnMsg)
         return urllib.unquote_plus(str(ReturnMsg))
-    except Exception,e:
+    except Exception, e:
         TRACE_ERROR(e)
         return '购买失败,请联系客服'
