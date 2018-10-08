@@ -994,8 +994,13 @@ def mycard_return_url():
         ReturnMsg = p.__ReturnMsg
         MyCardTradeNo = p.__MyCardTradeNo
         MyCardType = p.__MyCardType
-        if str(PayResult)!="3":
-            return urllib.unquote_plus(str(ReturnMsg))
+
+        if str(PayResult)!="3" or str(ReturnCode)!="1":
+            ReturnMsg = urllib.unquote_plus(str(ReturnMsg))
+            if str(ReturnMsg).startswith('Member account points insufficient'):
+                ReturnMsg += "<br/>" + "會員賬號點數不足,請聯系客服"
+            return ReturnMsg
+
         PreHashValue = none_str(ReturnCode) + none_str(PayResult) + none_str(FacTradeSeq) + none_str(
             PaymentType) + none_str(Amount) + none_str(Currency) \
                        + none_str(MyCardTradeNo) + none_str(MyCardType) + none_str(PromoCode) + MYCARDKEY
@@ -1042,26 +1047,20 @@ def mycard_return_url():
         TradeSeq = js['TradeSeq']
         MyCardString = ','.join([none_str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
                                                        FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
-        if str(ReturnCode) == "1":
-            with DB() as db:
-                db.sql_exec("""
-                    INSERT INTO poker.paycallback
-                    (TRANID, PAYID) 
-                    VALUES ('%s', '%s');
-                """, transaction_id, out_trade_no)
-                db.sql_exec("""
-                    INSERT INTO poker.my_card_report
-                    (MyCardTradeNo, MyCardString, TIM) 
-                    VALUES ('%s', '%s', now());
-                """, MyCardTradeNo, MyCardString)
-                db.commit()
-        if str(ReturnCode) == "1":
-            return 'Please return to game confirmation after successful purchase.<br/>購買成功,請回到遊戲確認'
-        TRACE("ReturnMsg:", ReturnMsg)
-        ReturnMsg = urllib.unquote_plus(str(ReturnMsg))
-        if str(ReturnMsg).startswith('Member account points insufficient'):
-            ReturnMsg += "<br/>" + "會員賬號點數不足,請聯系客服"
-        return ReturnMsg
+        with DB() as db:
+            db.sql_exec("""
+                INSERT INTO poker.paycallback
+                (TRANID, PAYID) 
+                VALUES ('%s', '%s');
+            """, transaction_id, out_trade_no)
+            db.sql_exec("""
+                INSERT INTO poker.my_card_report
+                (MyCardTradeNo, MyCardString, TIM) 
+                VALUES ('%s', '%s', now());
+            """, MyCardTradeNo, MyCardString)
+            db.commit()
+        return 'Please return to game confirmation after successful purchase.<br/>購買成功,請回到遊戲確認'
+
     except Exception, e:
         TRACE_ERROR(e)
         return 'Please contact customer service when purchase fails.<br/>購買失敗,請聯系客服'
