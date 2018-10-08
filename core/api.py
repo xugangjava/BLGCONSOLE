@@ -1023,7 +1023,8 @@ def mycard_return_url():
         TRACE("TradeQuery:",js.text)
         js = json.loads(js.text)
         ReturnCode = str(js['ReturnCode'])
-        if ReturnCode != "1": return urllib.unquote_plus(str(js['ReturnMsg']))
+        PayResult=str(js['PayResult'])
+        if ReturnCode != "1" or PayResult!="3": return urllib.unquote_plus(str(js['ReturnMsg']))
 
         if SandBoxMode == 'true':
             PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
