@@ -993,7 +993,7 @@ def mycard_return_url():
         if PreHashValue != Hash:
             TRACE("HASH:", Hash)
             TRACE("PreHashValue:", PreHashValue)
-            return "签名验证错误,请联系客服"
+            return "簽名驗證錯誤,請聯系客服"
         transaction_id, out_trade_no = MyCardTradeNo, FacTradeSeq
         if str(ReturnCode) == "1":
             with DB() as db:
@@ -1004,12 +1004,12 @@ def mycard_return_url():
                 """, transaction_id, out_trade_no)
                 db.commit()
         if str(ReturnCode) == "1":
-            return '购买成功,请回到游戏确认'
+            return '購買成功,請回到遊戲確認'
         TRACE("ReturnMsg:", ReturnMsg)
         ReturnMsg=urllib.unquote_plus(str(ReturnMsg))
         if str(ReturnMsg).startswith('Member account points insufficient'):
-            ReturnMsg+="<br/>"+"会员账号点数不足,请联系客服"
+            ReturnMsg+="<br/>"+"會員賬號點數不足,請聯系客服"
         return ReturnMsg
     except Exception, e:
         TRACE_ERROR(e)
-        return '购买失败,请联系客服'
+        return '購買失敗,請聯系客服'
