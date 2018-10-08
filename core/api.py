@@ -930,7 +930,7 @@ def mycard_auth_code():
                 INSERT INTO poker.my_card_trade_seq
                 (FacTradeSeq, CustomerId, TradeSeq,SandBoxMode,AuthCode ) 
                 VALUES ('%s', '%s', '%s');
-            """, param['FacTradeSeq'], param['CustomerId'], TradeSeq, param['SandBoxMode'], js['AuthCode '])
+            """, param['FacTradeSeq'], param['CustomerId'], TradeSeq, param['SandBoxMode'], js['AuthCode'])
             db.commit()
         return HTTPResponse(r.text, content_type="text/xml")
     except Exception, e:
