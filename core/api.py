@@ -995,7 +995,7 @@ def mycard_return_url():
             TRACE("PreHashValue:", PreHashValue)
             return "Signature verification error, please contact customer service.<br/>簽名驗證錯誤,請聯系客服"
         transaction_id, out_trade_no = MyCardTradeNo, FacTradeSeq
-        MyCardString = ','.join([str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
+        MyCardString = ','.join([none_str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
                                                   FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
         if str(ReturnCode) == "1":
             with DB() as db:
