@@ -75,12 +75,14 @@ def LOG_INIT():
 LOG = LOG_INIT()
 
 def TRACE(*args):
-    data=str(''.join([str(a) for a in args])).encode('gbk').decode('gbk')
-    if DEBUG:
-        print data
-    else:
-        LOG.info(data)
-
+    try:
+        data=str(''.join([str(a) for a in args])).encode('gbk').decode('gbk')
+        if DEBUG:
+            print data
+        else:
+            LOG.info(data)
+    except:
+        LOG.info(str(args))
 
 
 def TRACE_ERROR(e):
