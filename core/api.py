@@ -928,9 +928,9 @@ def mycard_auth_code():
         with DB() as db:
             db.sql_exec("""
                 INSERT INTO poker.my_card_trade_seq
-                (FacTradeSeq, CustomerId, TradeSeq) 
+                (FacTradeSeq, CustomerId, TradeSeq,SandBoxMode,AuthCode ) 
                 VALUES ('%s', '%s', '%s');
-            """, param['FacTradeSeq'], param['CustomerId'], TradeSeq)
+            """, param['FacTradeSeq'], param['CustomerId'], TradeSeq, param['SandBoxMode'], js['AuthCode '])
             db.commit()
         return HTTPResponse(r.text, content_type="text/xml")
     except Exception, e:
@@ -979,7 +979,7 @@ def mycard_return_url():
             if v is None: return ''
             return str(v)
 
-        import hashlib, urllib
+        import hashlib, urllib, json
         p = ParamWarper(request)
         TRACE("NOTIFY MYCARD:", str(p.params))
         MYCARDKEY = "At4qwWinp0cHizEmmX2qZPWW0jX0gXrl"
@@ -1007,13 +1007,34 @@ def mycard_return_url():
         transaction_id, out_trade_no = MyCardTradeNo, FacTradeSeq
         with DB() as db:
             r = db.sql_dict("""
-                select FacTradeSeq, CustomerId, TradeSeq  
+                select FacTradeSeq, CustomerId, TradeSeq  ,SandBoxMode
                 from my_card_trade_seq 
                 where FacTradeSeq='%s';
-            """,FacTradeSeq)
+            """, FacTradeSeq)
         TradeDateTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        CustomerId, TradeSeq = r['CustomerId'], r['TradeSeq']
-        TradeSeq = r['TradeSeq']
+        CustomerId,  SandBoxMode, AuthCode = r['CustomerId'], r['SandBoxMode'], r['AuthCode']
+        if SandBoxMode == 'true':
+            TradeQueryURL = "http//test.b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
+        else:
+            TradeQueryURL = "http//b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
+        js = requests.post(TradeQueryURL, data={
+            'AuthCode': AuthCode
+        })
+        js = json.loads(js)
+        ReturnCode = str(js['ReturnCode'])
+        if ReturnCode != "1": return urllib.unquote_plus(str(js['ReturnMsg']))
+
+        if SandBoxMode == 'true':
+            PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
+        else:
+            PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
+        js = requests.post(PaymentConfirmURL, data={
+            'AuthCode': AuthCode
+        })
+        js = json.loads(js)
+        ReturnCode = str(js['ReturnCode'])
+        if ReturnCode != "1": return urllib.unquote_plus(str(js['ReturnMsg']))
+        TradeSeq=js['TradeSeq']
         MyCardString = ','.join([none_str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
                                                        FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
         if str(ReturnCode) == "1":
