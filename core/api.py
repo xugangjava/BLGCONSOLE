@@ -1007,7 +1007,7 @@ def mycard_return_url():
         transaction_id, out_trade_no = MyCardTradeNo, FacTradeSeq
         with DB() as db:
             r = db.sql_dict("""
-                select FacTradeSeq, CustomerId, TradeSeq  ,SandBoxMode
+                select FacTradeSeq, CustomerId, TradeSeq  ,SandBoxMode,AuthCode
                 from my_card_trade_seq 
                 where FacTradeSeq='%s';
             """, FacTradeSeq)
