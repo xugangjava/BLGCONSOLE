@@ -1,6 +1,6 @@
 # coding=utf-8
 import sitecustomize
-from bottle import post, request, error, HTTPResponse, get, view, route,template
+from bottle import post, request, error, HTTPResponse, get, view, route, template
 from common.pay import *
 from common.sms import *
 
@@ -995,6 +995,8 @@ def mycard_return_url():
             TRACE("PreHashValue:", PreHashValue)
             return "Signature verification error, please contact customer service.<br/>簽名驗證錯誤,請聯系客服"
         transaction_id, out_trade_no = MyCardTradeNo, FacTradeSeq
+        MyCardString = ','.join([str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
+                                                  FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
         if str(ReturnCode) == "1":
             with DB() as db:
                 db.sql_exec("""
@@ -1002,14 +1004,39 @@ def mycard_return_url():
                     (TRANID, PAYID) 
                     VALUES ('%s', '%s');
                 """, transaction_id, out_trade_no)
+                db.sql_exec("""
+                    INSERT INTO poker.my_card_report
+                    (MyCardTradeNo, MyCardString, TIM) 
+                    VALUES ('%s', '%s', now());
+                """, MyCardTradeNo, MyCardString)
                 db.commit()
         if str(ReturnCode) == "1":
             return 'Please return to game confirmation after successful purchase.<br/>購買成功,請回到遊戲確認'
         TRACE("ReturnMsg:", ReturnMsg)
-        ReturnMsg=urllib.unquote_plus(str(ReturnMsg))
+        ReturnMsg = urllib.unquote_plus(str(ReturnMsg))
         if str(ReturnMsg).startswith('Member account points insufficient'):
-            ReturnMsg+="<br/>"+"會員賬號點數不足,請聯系客服"
+            ReturnMsg += "<br/>" + "會員賬號點數不足,請聯系客服"
         return ReturnMsg
     except Exception, e:
         TRACE_ERROR(e)
         return 'Please contact customer service when purchase fails.<br/>購買失敗,請聯系客服'
+
+
+@route('/api/my_card_report/', method=['GET', 'POST'])
+def my_card_report():
+    p = ParamWarper(request)
+    StartDateTime = p.__StartDateTime
+    EndDateTime = p.__EndDateTime
+    MyCardTradeNo = p.__MyCardTradeNo
+
+    if MyCardTradeNo:
+        with DB() as db:
+            r = db.sql_dict("select MyCardString from my_card_report where MyCardTradeNo='%s';"
+                            , MyCardTradeNo)
+            return r.get("MyCardString", '')
+    else:
+        with DB() as db:
+            rs = db.sql_dict_array("select MyCardString from my_card_report where TIM>'%s' and TIM<'%s';"
+                                   , StartDateTime, EndDateTime)
+        rs = '<br/>'.join([r['MyCardString'] for r in rs])
+        return rs

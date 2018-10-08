@@ -11,7 +11,7 @@ from core.apis import *
 
 session_opts = {
     'session.type': 'file',
-    'session.cookie_expires': 3600,
+    'session.cookie_expires': 100,
     'session.data_dir': './data',
     'session.auto': True
 }
