@@ -993,7 +993,7 @@ def mycard_return_url():
         if PreHashValue != Hash:
             TRACE("HASH:", Hash)
             TRACE("PreHashValue:", PreHashValue)
-            return "簽名驗證錯誤,請聯系客服"
+            return "Signature verification error, please contact customer service.<br/>簽名驗證錯誤,請聯系客服"
         transaction_id, out_trade_no = MyCardTradeNo, FacTradeSeq
         if str(ReturnCode) == "1":
             with DB() as db:
@@ -1004,7 +1004,7 @@ def mycard_return_url():
                 """, transaction_id, out_trade_no)
                 db.commit()
         if str(ReturnCode) == "1":
-            return '購買成功,請回到遊戲確認'
+            return 'Please return to game confirmation after successful purchase.<br/>購買成功,請回到遊戲確認'
         TRACE("ReturnMsg:", ReturnMsg)
         ReturnMsg=urllib.unquote_plus(str(ReturnMsg))
         if str(ReturnMsg).startswith('Member account points insufficient'):
@@ -1012,4 +1012,4 @@ def mycard_return_url():
         return ReturnMsg
     except Exception, e:
         TRACE_ERROR(e)
-        return '購買失敗,請聯系客服'
+        return 'Please contact customer service when purchase fails.<br/>購買失敗,請聯系客服'
