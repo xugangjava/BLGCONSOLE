@@ -929,7 +929,7 @@ def mycard_auth_code():
             db.sql_exec("""
                 INSERT INTO poker.my_card_trade_seq
                 (FacTradeSeq, CustomerId, TradeSeq,SandBoxMode,AuthCode ) 
-                VALUES ('%s', '%s', '%s');
+                VALUES ('%s', '%s', '%s','%s','%s');
             """, param['FacTradeSeq'], param['CustomerId'], TradeSeq, param['SandBoxMode'], js['AuthCode'])
             db.commit()
         return HTTPResponse(r.text, content_type="text/xml")
@@ -1012,7 +1012,7 @@ def mycard_return_url():
                 where FacTradeSeq='%s';
             """, FacTradeSeq)
         TradeDateTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        CustomerId,  SandBoxMode, AuthCode = r['CustomerId'], r['SandBoxMode'], r['AuthCode']
+        CustomerId, SandBoxMode, AuthCode = r['CustomerId'], r['SandBoxMode'], r['AuthCode']
         if SandBoxMode == 'true':
             TradeQueryURL = "http//test.b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
         else:
@@ -1034,7 +1034,7 @@ def mycard_return_url():
         js = json.loads(js)
         ReturnCode = str(js['ReturnCode'])
         if ReturnCode != "1": return urllib.unquote_plus(str(js['ReturnMsg']))
-        TradeSeq=js['TradeSeq']
+        TradeSeq = js['TradeSeq']
         MyCardString = ','.join([none_str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
                                                        FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
         if str(ReturnCode) == "1":
