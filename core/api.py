@@ -1,6 +1,6 @@
 # coding=utf-8
 import sitecustomize
-from bottle import post, request, error, HTTPResponse, get, view, route
+from bottle import post, request, error, HTTPResponse, get, view, route,template
 from common.pay import *
 from common.sms import *
 
@@ -1006,7 +1006,7 @@ def mycard_return_url():
         if str(ReturnCode) == "1":
             return '购买成功,请回到游戏确认'
         TRACE("ReturnMsg:", ReturnMsg)
-        return urllib.unquote_plus(str(ReturnMsg))
+        return template('my.html',msg=urllib.unquote_plus(str(ReturnMsg)))
     except Exception, e:
         TRACE_ERROR(e)
         return '购买失败,请联系客服'
