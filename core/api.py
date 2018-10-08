@@ -994,6 +994,8 @@ def mycard_return_url():
         ReturnMsg = p.__ReturnMsg
         MyCardTradeNo = p.__MyCardTradeNo
         MyCardType = p.__MyCardType
+        if str(PayResult)!="3":
+            return urllib.unquote_plus(str(ReturnMsg))
         PreHashValue = none_str(ReturnCode) + none_str(PayResult) + none_str(FacTradeSeq) + none_str(
             PaymentType) + none_str(Amount) + none_str(Currency) \
                        + none_str(MyCardTradeNo) + none_str(MyCardType) + none_str(PromoCode) + MYCARDKEY
