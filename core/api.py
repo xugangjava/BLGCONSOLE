@@ -898,6 +898,7 @@ def api_payssion_notify_url():
 @route('/api/my_auth_code/', method=['GET', 'POST'])
 def mycard_auth_code():
     try:
+        import json
         p = ParamWarper(request)
         if p.__SandBoxMode == 'true':
             MYCARD_URL = 'https://test.b2b.mycard520.com.tw/MyBillingPay/api/AuthGlobal'
@@ -922,6 +923,15 @@ def mycard_auth_code():
         MYCARD_URL = MYCARD_URL.format(**param)
         TRACE("MYCARDURL:", MYCARD_URL)
         r = requests.get(MYCARD_URL)
+        js = json.loads(r.text)
+        TradeSeq = js['TradeSeq']
+        with DB() as db:
+            db.sql_exec("""
+                INSERT INTO poker.my_card_trade_seq
+                (FacTradeSeq, CustomerId, TradeSeq) 
+                VALUES ('%s', '%s', '%s');
+            """, param['FacTradeSeq'], param['CustomerId'], TradeSeq)
+            db.commit()
         return HTTPResponse(r.text, content_type="text/xml")
     except Exception, e:
         TRACE_ERROR(e)
@@ -995,8 +1005,17 @@ def mycard_return_url():
             TRACE("PreHashValue:", PreHashValue)
             return "Signature verification error, please contact customer service.<br/>簽名驗證錯誤,請聯系客服"
         transaction_id, out_trade_no = MyCardTradeNo, FacTradeSeq
+        with DB() as db:
+            r = db.sql_dict("""
+                select FacTradeSeq, CustomerId, TradeSeq  
+                from my_card_trade_seq 
+                where FacTradeSeq='%s';
+            """,FacTradeSeq)
+        TradeDateTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        CustomerId, TradeSeq = r['CustomerId'], r['TradeSeq']
+        TradeSeq = r['TradeSeq']
         MyCardString = ','.join([none_str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
-                                                  FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
+                                                       FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
         if str(ReturnCode) == "1":
             with DB() as db:
                 db.sql_exec("""
