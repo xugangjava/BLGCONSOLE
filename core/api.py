@@ -1006,6 +1006,7 @@ def mycard_return_url():
         if str(ReturnCode) == "1":
             return '购买成功,请回到游戏确认'
         TRACE("ReturnMsg:", ReturnMsg)
+        ReturnMsg=urllib.unquote_plus(str(ReturnMsg))
         if str(ReturnMsg).startswith('Member account points insufficient'):
             ReturnMsg+="<br/>"+"会员账号点数不足,请联系客服"
         return ReturnMsg
