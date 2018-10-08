@@ -1014,13 +1014,14 @@ def mycard_return_url():
         TradeDateTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         CustomerId, SandBoxMode, AuthCode = r['CustomerId'], r['SandBoxMode'], r['AuthCode']
         if SandBoxMode == 'true':
-            TradeQueryURL = "http//test.b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
+            TradeQueryURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
         else:
-            TradeQueryURL = "http//b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
+            TradeQueryURL = "http://b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
         js = requests.post(TradeQueryURL, data={
             'AuthCode': AuthCode
         })
-        js = json.loads(js)
+        TRACE("TradeQuery:",js.text)
+        js = json.loads(js.text)
         ReturnCode = str(js['ReturnCode'])
         if ReturnCode != "1": return urllib.unquote_plus(str(js['ReturnMsg']))
 
@@ -1031,7 +1032,8 @@ def mycard_return_url():
         js = requests.post(PaymentConfirmURL, data={
             'AuthCode': AuthCode
         })
-        js = json.loads(js)
+        TRACE("PaymentConfirm:", js.text)
+        js = json.loads(js.text)
         ReturnCode = str(js['ReturnCode'])
         if ReturnCode != "1": return urllib.unquote_plus(str(js['ReturnMsg']))
         TradeSeq = js['TradeSeq']
