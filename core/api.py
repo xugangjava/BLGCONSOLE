@@ -1017,9 +1017,7 @@ def mycard_return_url():
     try:
         TRACE("NOTIFY MYCARD============")
 
-        def none_str(v):
-            if v is None: return ''
-            return str(v)
+
 
         import hashlib, urllib, json
         p = ParamWarper(request)

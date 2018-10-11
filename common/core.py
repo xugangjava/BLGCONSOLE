@@ -468,3 +468,8 @@ def random_is_happen(rate):
             minp = pp
             minj = j
     return minj == 0
+
+
+def none_str(v):
+    if v is None: return ''
+    return str(v)
