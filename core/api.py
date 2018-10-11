@@ -1020,6 +1020,7 @@ def mycard_return_url():
             """, FacTradeSeq)
         TradeDateTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         CustomerId, SandBoxMode, AuthCode = r['CustomerId'], r['SandBoxMode'], r['AuthCode']
+        #3.3
         if SandBoxMode == 'true':
             TradeQueryURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
         else:
@@ -1032,7 +1033,7 @@ def mycard_return_url():
         ReturnCode = str(js['ReturnCode'])
         PayResult=str(js['PayResult'])
         if ReturnCode != "1" or PayResult!="3": return urllib.unquote_plus(str(js['ReturnMsg']))
-
+        #3.4
         if SandBoxMode == 'true':
             PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
         else:
