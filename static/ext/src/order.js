@@ -65,7 +65,7 @@ Ext.onReady(function () {
                             var form = Ext.getCmp(pay_order_search_grid);
                             var grid = Ext.getCmp(pay_order_grid);
                             var json = form.getForm().getValues();
-                            json.nopay=!nopay;
+                            nopay=json.nopay=!nopay;
                             grid.search(json);
                         }
                     }],
@@ -80,7 +80,7 @@ Ext.onReady(function () {
 
                         { header: '订单状态', dataIndex: 'verify', width: 100 , renderer: verify_status},
                         { header: '订单编号', dataIndex: 'orderid', width: 100 },
-                        { header: '订单交易号', dataIndex: 'trade_no', width: 100 },
+                        { header: '订单交易号', dataIndex: 'payNum', width: 100 },
                         { header: '玩家渠道', dataIndex: 'paychannelname', width: 120 },
                         { header: '游戏名称', dataIndex: 'versionname', width: 120 },
                         { header: '创建时间', dataIndex: 'tim', width: 120 },
