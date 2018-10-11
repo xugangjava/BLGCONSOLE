@@ -939,6 +939,8 @@ def mycard_auth_code():
 
 @route('/api/mycard_notify_url/', method=['GET', 'POST'])
 def mycard_notify_url():
+    p = ParamWarper(request)
+    TRACE("MYCARDPARAM:", str(p.params))
     return HTTPResponse("success", content_type="text/xml")
 
     # import json
