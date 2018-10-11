@@ -979,6 +979,7 @@ def mycard_pay(FacTradeSeq):
     TradeSeq = js['TradeSeq']
     MyCardString = ','.join([none_str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
                                                    FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
+    transaction_id=MyCardTradeNo
     with DB() as db:
         db.sql_exec("""
                    INSERT INTO poker.paycallback
