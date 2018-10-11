@@ -959,6 +959,9 @@ def mycard_pay(FacTradeSeq):
     js = json.loads(js.text)
     ReturnCode = str(js['ReturnCode'])
     PayResult = str(js['PayResult'])
+    PaymentType=str(js['PaymentType'])
+    Amount=str(js['Amount'])
+    Currency=str(js['Currency'])
     MyCardTradeNo = str(js['MyCardTradeNo'])
     if ReturnCode != "1" or PayResult != "3": return
     # 3.4
