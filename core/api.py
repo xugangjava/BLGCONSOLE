@@ -991,6 +991,38 @@ def mycard_pay(FacTradeSeq):
                    (MyCardTradeNo, MyCardString, TIM) 
                    VALUES ('%s', '%s', now());
                """, MyCardTradeNo, MyCardString)
+
+        r=db.sql_dict("select usrId,chips from pay where payNum='%s';",out_trade_no)
+        receiverid,chips=r['usrId'],r['chips']
+        db.sql_exec("""
+              INSERT INTO
+                 poker.mail(
+                   sendername
+                  ,senderid
+                  ,receiverid
+                  ,title
+                  ,content
+                  ,sendtim
+                  ,attachmenttype
+                  ,attachmentnum
+                  ,isread
+                  ,mailtype
+                  ,isgetattachment)
+              VALUES
+                 (
+                      'System Mail'
+                      ,1000
+                      ,%d
+                      ,'%s'
+                      ,'%s'
+                      ,now()
+                      ,%d
+                      ,%d
+                      ,0
+                      ,0
+                      ,0
+                  );
+        """, receiverid, "MYCARD充值到账", "您的MYCARD充值筹码"+str(chips)+"已到账，请注意查收。", 0, 0)
         db.commit()
 
 
