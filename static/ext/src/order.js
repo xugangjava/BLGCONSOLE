@@ -76,12 +76,10 @@ Ext.onReady(function () {
                         { header: '购买筹码', dataIndex: 'chips', width: 120 },
                         { header: '玩家用户名', dataIndex: 'phone', width: 120 },
                         { header: '玩家昵称', dataIndex: 'nickname', width: 120 },
-                        { header: '支付方式', dataIndex: 'pay_way', width: 120 },
-
+                        { header: '支付方式', dataIndex: 'paychannelname', width: 120 },
                         { header: '订单状态', dataIndex: 'verify', width: 100 , renderer: verify_status},
                         { header: '订单编号', dataIndex: 'orderid', width: 100 },
                         { header: '订单交易号', dataIndex: 'payNum', width: 100 },
-                        { header: '玩家渠道', dataIndex: 'paychannelname', width: 120 },
                         { header: '游戏名称', dataIndex: 'versionname', width: 120 },
                         { header: '创建时间', dataIndex: 'tim', width: 120 },
                         { header: '玩家等级', dataIndex: 'level', width: 120 },
