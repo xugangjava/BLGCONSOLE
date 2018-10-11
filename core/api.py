@@ -937,39 +937,76 @@ def mycard_auth_code():
         TRACE_ERROR(e)
 
 
+def mycard_pay(FacTradeSeq):
+    with DB() as db:
+        if db.sql_exists("select 1 from paycallback where PAYID='%s';", FacTradeSeq): return
+        r = db.sql_dict("""
+                   select FacTradeSeq, CustomerId, TradeSeq  ,SandBoxMode,AuthCode
+                   from my_card_trade_seq 
+                   where FacTradeSeq='%s';
+               """, FacTradeSeq)
+    TradeDateTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    CustomerId, SandBoxMode, AuthCode = r['CustomerId'], r['SandBoxMode'], r['AuthCode']
+    # 3.3
+    if SandBoxMode == 'true':
+        TradeQueryURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
+    else:
+        TradeQueryURL = "http://b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
+    js = requests.post(TradeQueryURL, data={
+        'AuthCode': AuthCode
+    })
+    TRACE("TradeQuery:", js.text)
+    js = json.loads(js.text)
+    ReturnCode = str(js['ReturnCode'])
+    PayResult = str(js['PayResult'])
+    MyCardTradeNo = str(js['MyCardTradeNo'])
+    if ReturnCode != "1" or PayResult != "3": return
+    # 3.4
+    if SandBoxMode == 'true':
+        PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
+    else:
+        PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
+    js = requests.post(PaymentConfirmURL, data={
+        'AuthCode': AuthCode
+    })
+    TRACE("PaymentConfirm:", js.text)
+    js = json.loads(js.text)
+    ReturnCode = str(js['ReturnCode'])
+    if ReturnCode != "1": return
+    TradeSeq = js['TradeSeq']
+    MyCardString = ','.join([none_str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
+                                                   FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
+    with DB() as db:
+        db.sql_exec("""
+                   INSERT INTO poker.paycallback
+                   (TRANID, PAYID) 
+                   VALUES ('%s', '%s');
+               """, transaction_id, out_trade_no)
+        db.sql_exec("""
+                   INSERT INTO poker.my_card_report
+                   (MyCardTradeNo, MyCardString, TIM) 
+                   VALUES ('%s', '%s', now());
+               """, MyCardTradeNo, MyCardString)
+        db.commit()
+
+
 @route('/api/mycard_notify_url/', method=['GET', 'POST'])
 def mycard_notify_url():
     p = ParamWarper(request)
     TRACE("MYCARDPARAM:", str(p.params))
-    return HTTPResponse("success", content_type="text/xml")
-
-    # import json
-    # p = ParamWarper(request)
-    # TRACE("MYCARDPARAM:", str(p.params))
-    # data = p.__DATA
-    # TRACE(data)
-    # try:
-    #     data = json.loads(data)
-    #     ReturnCode = data['ReturnCode']
-    #     ReturnMsg = data['ReturnMsg']
-    #     FacServiceId = data['FacServiceId']
-    #     TotalNum = data['TotalNum']
-    #     FacTradeSeq = data['FacTradeSeq']
-    #     TRACE("PARAM:", str(data))
-    #     if str(ReturnCode) == '1':
-    #         for seq in FacTradeSeq:
-    #             transaction_id, out_trade_no = seq, seq
-    #             with DB() as db:
-    #                 db.sql_exec("""
-    #                     INSERT INTO poker.paycallback
-    #                     (TRANID, PAYID)
-    #                     VALUES ('%s', '%s');
-    #                 """, transaction_id, out_trade_no)
-    #                 db.commit()
-    #     return HTTPResponse("success", content_type="text/xml")
-    # except Exception,e:
-    #     TRACE_ERROR(e)
-    #     return error(404)
+    data = p.__DATA
+    TRACE(data)
+    try:
+        data = json.loads(data)
+        ReturnCode = data['ReturnCode']
+        FacTradeSeq = data['FacTradeSeq']
+        TRACE("PARAM:", str(data))
+        if str(ReturnCode) == '1':
+            for seq in FacTradeSeq: mycard_pay(seq)
+        return HTTPResponse("success", content_type="text/xml")
+    except Exception, e:
+        TRACE_ERROR(e)
+        return error(404)
 
 
 @route('/api/mycard_return_url/', method=['GET', 'POST'])
@@ -997,12 +1034,11 @@ def mycard_return_url():
         MyCardTradeNo = p.__MyCardTradeNo
         MyCardType = p.__MyCardType
 
-        if str(PayResult)!="3" or str(ReturnCode)!="1":
+        if str(PayResult) != "3" or str(ReturnCode) != "1":
             ReturnMsg = urllib.unquote_plus(str(ReturnMsg))
             if str(ReturnMsg).startswith('Member account points insufficient'):
                 ReturnMsg += "<br/>" + "會員賬號點數不足,請聯系客服"
             return ReturnMsg
-
         PreHashValue = none_str(ReturnCode) + none_str(PayResult) + none_str(FacTradeSeq) + none_str(
             PaymentType) + none_str(Amount) + none_str(Currency) \
                        + none_str(MyCardTradeNo) + none_str(MyCardType) + none_str(PromoCode) + MYCARDKEY
@@ -1013,55 +1049,57 @@ def mycard_return_url():
             TRACE("HASH:", Hash)
             TRACE("PreHashValue:", PreHashValue)
             return "Signature verification error, please contact customer service.<br/>簽名驗證錯誤,請聯系客服"
-        transaction_id, out_trade_no = MyCardTradeNo, FacTradeSeq
-        with DB() as db:
-            r = db.sql_dict("""
-                select FacTradeSeq, CustomerId, TradeSeq  ,SandBoxMode,AuthCode
-                from my_card_trade_seq 
-                where FacTradeSeq='%s';
-            """, FacTradeSeq)
-        TradeDateTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        CustomerId, SandBoxMode, AuthCode = r['CustomerId'], r['SandBoxMode'], r['AuthCode']
-        #3.3
-        if SandBoxMode == 'true':
-            TradeQueryURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
-        else:
-            TradeQueryURL = "http://b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
-        js = requests.post(TradeQueryURL, data={
-            'AuthCode': AuthCode
-        })
-        TRACE("TradeQuery:",js.text)
-        js = json.loads(js.text)
-        ReturnCode = str(js['ReturnCode'])
-        PayResult=str(js['PayResult'])
-        if ReturnCode != "1" or PayResult!="3": return urllib.unquote_plus(str(js['ReturnMsg']))
-        #3.4
-        if SandBoxMode == 'true':
-            PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
-        else:
-            PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
-        js = requests.post(PaymentConfirmURL, data={
-            'AuthCode': AuthCode
-        })
-        TRACE("PaymentConfirm:", js.text)
-        js = json.loads(js.text)
-        ReturnCode = str(js['ReturnCode'])
-        if ReturnCode != "1": return urllib.unquote_plus(str(js['ReturnMsg']))
-        TradeSeq = js['TradeSeq']
-        MyCardString = ','.join([none_str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
-                                                       FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
-        with DB() as db:
-            db.sql_exec("""
-                INSERT INTO poker.paycallback
-                (TRANID, PAYID) 
-                VALUES ('%s', '%s');
-            """, transaction_id, out_trade_no)
-            db.sql_exec("""
-                INSERT INTO poker.my_card_report
-                (MyCardTradeNo, MyCardString, TIM) 
-                VALUES ('%s', '%s', now());
-            """, MyCardTradeNo, MyCardString)
-            db.commit()
+        mycard_pay(FacTradeSeq)
+
+        # transaction_id, out_trade_no = MyCardTradeNo, FacTradeSeq
+        # with DB() as db:
+        #     r = db.sql_dict("""
+        #         select FacTradeSeq, CustomerId, TradeSeq  ,SandBoxMode,AuthCode
+        #         from my_card_trade_seq
+        #         where FacTradeSeq='%s';
+        #     """, FacTradeSeq)
+        # TradeDateTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        # CustomerId, SandBoxMode, AuthCode = r['CustomerId'], r['SandBoxMode'], r['AuthCode']
+        # # 3.3
+        # if SandBoxMode == 'true':
+        #     TradeQueryURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
+        # else:
+        #     TradeQueryURL = "http://b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
+        # js = requests.post(TradeQueryURL, data={
+        #     'AuthCode': AuthCode
+        # })
+        # TRACE("TradeQuery:", js.text)
+        # js = json.loads(js.text)
+        # ReturnCode = str(js['ReturnCode'])
+        # PayResult = str(js['PayResult'])
+        # if ReturnCode != "1" or PayResult != "3": return urllib.unquote_plus(str(js['ReturnMsg']))
+        # # 3.4
+        # if SandBoxMode == 'true':
+        #     PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
+        # else:
+        #     PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
+        # js = requests.post(PaymentConfirmURL, data={
+        #     'AuthCode': AuthCode
+        # })
+        # TRACE("PaymentConfirm:", js.text)
+        # js = json.loads(js.text)
+        # ReturnCode = str(js['ReturnCode'])
+        # if ReturnCode != "1": return urllib.unquote_plus(str(js['ReturnMsg']))
+        # TradeSeq = js['TradeSeq']
+        # MyCardString = ','.join([none_str(x) for x in [PaymentType, TradeSeq, MyCardTradeNo,
+        #                                                FacTradeSeq, CustomerId, Amount, Currency, TradeDateTime]])
+        # with DB() as db:
+        #     db.sql_exec("""
+        #         INSERT INTO poker.paycallback
+        #         (TRANID, PAYID)
+        #         VALUES ('%s', '%s');
+        #     """, transaction_id, out_trade_no)
+        #     db.sql_exec("""
+        #         INSERT INTO poker.my_card_report
+        #         (MyCardTradeNo, MyCardString, TIM)
+        #         VALUES ('%s', '%s', now());
+        #     """, MyCardTradeNo, MyCardString)
+        #     db.commit()
         return 'Please return to game confirmation after successful purchase.<br/>購買成功,請回到遊戲確認'
 
     except Exception, e:
