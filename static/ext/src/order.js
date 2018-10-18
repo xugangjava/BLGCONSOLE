@@ -81,6 +81,7 @@ Ext.onReady(function () {
                         { header: '订单编号', dataIndex: 'orderid', width: 100 },
                         { header: '订单交易号', dataIndex: 'payNum', width: 100 },
                         { header: '游戏名称', dataIndex: 'versionname', width: 120 },
+                        { header: '游戏版本', dataIndex: 'versionid', width: 120 },
                         { header: '创建时间', dataIndex: 'tim', width: 120 },
                         { header: '玩家等级', dataIndex: 'level', width: 120 },
                         { header: '玩家总充值', dataIndex: 'moneyconsume', width: 120 }
