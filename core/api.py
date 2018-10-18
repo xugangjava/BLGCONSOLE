@@ -561,6 +561,8 @@ def api_exchange_config():
         else:
             items = db.sql_dict_array(
                 "SELECT ID, NAME, POINT, CHIPS, STOCK, LUCK_TYPE, RTYPE FROM exchange_config ORDER  BY ID")
+        if versionid!='BJLTW':
+            items=[item for item in items if item['ID']<=30]
         luck_draw_point = 1000
     return {
         'items': items,
