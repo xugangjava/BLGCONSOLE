@@ -951,7 +951,7 @@ def mycard_pay(FacTradeSeq):
     if SandBoxMode == 'true':
         TradeQueryURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
     else:
-        TradeQueryURL = "http://b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
+        TradeQueryURL = "https://b2b.mycard520.com.tw/MyBillingPay/api/TradeQuery"
     js = requests.post(TradeQueryURL, data={
         'AuthCode': AuthCode
     })
@@ -968,7 +968,7 @@ def mycard_pay(FacTradeSeq):
     if SandBoxMode == 'true':
         PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
     else:
-        PaymentConfirmURL = "http://test.b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
+        PaymentConfirmURL = "https://b2b.mycard520.com.tw/MyBillingPay/api/PaymentConfirm"
     js = requests.post(PaymentConfirmURL, data={
         'AuthCode': AuthCode
     })
