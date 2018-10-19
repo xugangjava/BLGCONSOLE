@@ -603,7 +603,8 @@ def do_edit_version():
                 UPDATE poker.channel_version 
         SET NAME = '%s' , IS_APPROVE = %d, CHANNEL_ID = %d, LAN_ID = %d ,UPDATE_LINK='%s', OPEN_MY_CARD_PAY=%d
         WHERE id=%d-- Please complete
-        ; """, p.str__VNAME, 1 if p.__IS_APPROVE == 'true' else 0, p.int__CID, p.int__LAN_ID, p.__UPDATE_LINK,p.__OPEN_MY_CARD_PAY, p.__pk)
+        ; """, p.str__VNAME, 1 if p.__IS_APPROVE == 'true' else 0, p.int__CID, p.int__LAN_ID, p.__UPDATE_LINK,
+                    p.__OPEN_MY_CARD_PAY, p.__pk)
         db.commit()
     return SUCCESS
 
@@ -808,6 +809,48 @@ def game_count_list():
     _cmp_game_count(rs)
     return rs
 
+@login_require
+@route('/blg/game_count_channel_list/', method=['GET', 'POST'])
+def game_count_channel_list():
+    p = ParamWarper(request)
+    c = []
+    ORDER = "DESC"
+    if not p.__chart:
+        start, limit = p.int__start, p.int__limit
+    else:
+        ORDER = "ASC"
+        start, limit = 0, 20
+        c.append('LOG_TIME>f_day(-20)')
+    if not p.__channel_id:
+        c.append("CHANNEL = ''%s''" % "BLGOL")
+    else:
+        with DB() as db:
+           r=db.sql_dict("select NO from channel where id=%d;",p.int__channel_id)
+        c.append("CHANNEL = ''%s''" % r['NO'])
+    with DB() as db:
+        rs = db.sql_padding(
+            start=start,
+            limit=limit,
+            tbName="""gm_count_channel""",
+            columNames="""
+                ID, 
+                LOG_TIME, 
+                LOGIN_COUNT LOGIN_COUNT, 
+                REG_COUNT, 
+                LOGIN_COUNT-REG_COUNT ACTVIE_COUNT,
+                PAY_COUNT, 
+                TOTAL_PAY, 
+                DAY2_LEAVE,
+                YESTODAY_LOGIN,
+                YESTODAY_REG,
+                CHANNEL
+            """,
+            orderBy="ID " + ORDER,
+            condition=' AND '.join(c)
+        )
+    _cmp_game_count(rs)
+    return rs
+
 
 #######################################################
 # 头像审核
@@ -953,7 +996,7 @@ def game_play_info():
 @route('/blg/gm_send_chips_count/', method=['GET', 'POST'])
 def gm_send_chips_count():
     p = ParamWarper(request)
-    condition=[]
+    condition = []
     if p.__chart:
         start, limit = 0, 90
         condition.append("REASON= ''筹码总发放''")

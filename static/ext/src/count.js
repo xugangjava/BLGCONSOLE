@@ -18,6 +18,15 @@ Ext.onReady(function () {
         url: '/blg/game_count_list/?chart=1'
     });
 
+    var app_analysis_channel_store= new Ext.data.JsonStore({
+        fields: ['LOG_TIME', 'LOGIN_COUNT', 'REG_COUNT', 'ACTVIE_COUNT',
+            'TOTAL_PAY', 'PAY_COUNT', 'D2_LEAVE_RATE', 'PAY_RATE',
+            'D2_LEAVE_RATE_V', 'PAY_RATE_V','CHANNEL',
+            'ARPU', 'ARPPU'],
+        root: 'items',
+        autoLoad: true,
+        url: '/blg/game_count_channel_list/?chart=1'
+    });
 
     var game_chips_count = new Ext.data.JsonStore({
         fields: ['LOG_TIME', 'CHIPS', 'ID'],
@@ -158,6 +167,115 @@ Ext.onReady(function () {
                     }
                 ]
             }
+        },{
+            text: '游戏统计_渠道',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'panel',
+                layout: {
+                    type: 'vbox',
+                    padding: '1',
+                    align: 'stretch'
+                },
+                border: false,
+                flex: 4,
+                nopadding: false,
+                items: [{
+                    xtype: 'form',
+                    flex: 2,
+                    id: 'app_analysis_channel_search_form',
+                    padding: 10,
+                    items: [
+                        {fieldLabel: '开始时间', xtype: 'datefield', name: 'start_time', format: 'Y-m-d'},
+                        {fieldLabel: '结束时间', xtype: 'datefield', name: 'end_time', format: 'Y-m-d'},
+                        {fieldLabel: '渠道',xtype: 'remotecombo', name: 'channel_id', url: '/blg/combo_channel/',value:'百家乐Online'}
+                    ],
+                    buttons: [{
+                        iconCls: 'Databasedelete',
+                        text: '清空条件',
+                        handler: function () {
+                            var form = Ext.getCmp('app_analysis_channel_search_form');
+                            form.reset();
+                        }
+                    }, {
+                        iconCls: 'Databaseedit',
+                        text: '查询',
+                        handler: function () {
+                            var form = Ext.getCmp('app_analysis_channel_search_form');
+                            var json = form.getForm().getValues();
+                            var grid = Ext.getCmp('active_channel_log_grid');
+                            app_analysis_channel_store.load({
+                                params: json
+                            });
+                            grid.search(json);
+                        }
+                    }, {
+                        iconCls: 'Databaseedit',
+                        text: '导出EXCE',
+                        handler: function () {
+                            var form = Ext.getCmp(app_analysis_search_form);
+                            var json = form.getForm().getValues();
+                            var grid = Ext.getCmp(active_log_grid);
+                            app_analysis_channel_store.load({
+                                params: json
+                            });
+                            grid.search(json);
+                            var download = '/ffqp/console/app_analysis/?m=excel';
+                            for (var key in json) {
+                                download += '&' + key + '=' + json[key];
+                            }
+                            window.location.href = download;
+                        }
+                    }]
+                }, {
+                    xtype: 'linechart',
+                    store: app_analysis_channel_store,
+                    url: '/static/ext/resources/charts.swf',
+                    xField: 'LOG_TIME',
+                    flex: 3,
+                    series: [
+                        {type: 'line', displayName: '留存率', yField: 'D2_LEAVE_RATE_V', style: {color: 716699}},
+                        {type: 'line', displayName: '付费率', yField: 'PAY_RATE_V', style: {color: 0x2BD591}}
+                    ],
+                    extraStyle: {
+                        legend: {
+                            display: 'bottom',
+                            padding: 5,
+                            font: {
+                                family: 'Tahoma',
+                                size: 13
+                            }
+                        }
+                    },
+                    listeners: {
+                        itemclick: function (o) {
+                            var rec = store.getAt(o.index);
+                            Ext.example.msg('详细信息', '{0}.', rec.get('name'));
+                        }
+                    }
+                }, {
+                        xtype: 'basegrid',
+                        action: '/blg/game_count_channel_list/',
+                        flex: 4,
+                        id: 'active_channel_log_grid',
+                        nopadding: false,
+                        columes: [
+                            {header: '渠道', dataIndex: 'CHANNEL', width: 200},
+                            {header: '日期', dataIndex: 'LOG_TIME', width: 200},
+                            {header: '登录用户', dataIndex: 'LOGIN_COUNT', width: 200},
+                            {header: '注册用户', dataIndex: 'REG_COUNT', width: 200},
+                            {header: '有效活跃', dataIndex: 'ACTVIE_COUNT', width: 200},
+                            {header: '付费人数', dataIndex: 'PAY_COUNT', width: 200},
+                            {header: '总付费', dataIndex: 'TOTAL_PAY', width: 200},
+                            {header: '两日留存', dataIndex: 'D2_LEAVE_RATE', width: 200},
+                            {header: '付费率', dataIndex: 'PAY_RATE', width: 200},
+                            {header: 'Arpu', dataIndex: 'ARPU', width: 200},
+                            {header: 'Arppu', dataIndex: 'ARPPU', width: 200},
+                        ]
+                    }
+                ]
+            }
         }, {
             text: '充值统计',
             leaf: true,
@@ -273,6 +391,7 @@ Ext.onReady(function () {
                     {header: '名称', dataIndex: 'CNAME', width: 120},
                     {header: '下注筹码', dataIndex: 'CHIP_IN', width: 120},
                     {header: '赢取筹码', dataIndex: 'CHIP_WIN', width: 120},
+                    {header: '积分产出', dataIndex: 'TOTAL_LOTTE', width: 120},
                     {
                         header: '赢取期望',
                         dataIndex: 'CHIP_WIN',
