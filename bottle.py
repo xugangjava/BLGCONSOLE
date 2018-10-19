@@ -1775,7 +1775,7 @@ class PluginError(BottleException): pass
 
 import json
 import datetime
-
+import decimal
 
 class CJsonEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -1783,6 +1783,8 @@ class CJsonEncoder(json.JSONEncoder):
             return obj.strftime('%Y-%m-%d %H:%M:%S')
         elif isinstance(obj, datetime.date):
             return obj.strftime("%Y-%m-%d")
+        elif isinstance(obj,decimal.Decimal):
+            return str(obj)
         else:
             return json.JSONEncoder.default(self, obj)
 
