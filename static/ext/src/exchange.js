@@ -138,6 +138,7 @@ Ext.onReady(function () {
                             },
 
                             {header: '兑换类型', dataIndex: 'EX_WAY', width: 80},
+                            {header: '获取途径', dataIndex: 'EXTYPE', width: 80},
                             {header: '玩家ID', dataIndex: 'usrid', width: 80},
                             {header: '玩家昵称', dataIndex: 'nickname', width: 80},
                             {header: '玩家电话', dataIndex: 'phone', width: 80},

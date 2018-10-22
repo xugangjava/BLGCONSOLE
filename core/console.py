@@ -495,6 +495,7 @@ def exchange_approve_log_list():
                 ,c.LUCK_TYPE
                 ,l.UID
                 ,l.EXTIME
+                ,l.EXTYPE
                 ,u.usrid
                 ,u.nickname
                 ,u.phone
