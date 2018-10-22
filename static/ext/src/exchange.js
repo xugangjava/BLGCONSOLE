@@ -136,13 +136,10 @@ Ext.onReady(function () {
                                     return "未知类型"
                                 }
                             },
-
-                            {header: '兑换类型', dataIndex: 'EX_WAY', width: 80},
                             {header: '获取途径', dataIndex: 'EXTYPE', width: 80},
                             {header: '玩家ID', dataIndex: 'usrid', width: 80},
                             {header: '玩家昵称', dataIndex: 'nickname', width: 80},
                             {header: '玩家电话', dataIndex: 'phone', width: 80},
-
                             {header: '审核状态', dataIndex: 'STATUS', width: 80},
                             {header: '审核时间', dataIndex: 'APPROVE_TIME', width: 120},
                             {header: '审核备注', dataIndex: 'APPROVE_REMARK', width: 120},
@@ -150,8 +147,8 @@ Ext.onReady(function () {
                             {header: '地址', dataIndex: 'ADDR', width: 120},
                             {header: '手机号', dataIndex: 'PHONE', width: 120},
                             {header: '消耗积分', dataIndex: 'POINT', width: 80},
-
-                            {header: '兑换时间', dataIndex: 'EXTIME', width: 120}
+                            {header: '兑换时间', dataIndex: 'EXTIME', width: 120},
+                            {header: '兑换类型', dataIndex: 'EX_WAY', width: 80},
                         ]
                     }
                 ]
