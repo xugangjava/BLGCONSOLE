@@ -301,7 +301,7 @@ def exchange_approve_list():
             p.int__limit,
             tbName="""
                  exchange_approve_list l
-                 LEFT JOIN exchange_config c ON l.ID = c.ID
+                 LEFT JOIN exchange_config c ON l.EX_ID = c.ID
                  LEFT JOIN usr u ON l.UID = u.usrid
             """,
             columNames="""
