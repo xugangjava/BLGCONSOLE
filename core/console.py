@@ -485,7 +485,7 @@ def exchange_approve_log_list():
                  exchange_log l
                  LEFT JOIN exchange_approve_list a ON l.APPROVE_ID = a.ID
                  LEFT JOIN exchange_config c ON l.EXID = c.ID
-                 LEFT JOIN usr u ON a.UID = u.usrid
+                 LEFT JOIN usr u ON l.UID = u.usrid
             """,
             columNames="""
                  l.ID
