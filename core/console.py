@@ -82,6 +82,8 @@ def do_login_out():
 @login_require
 @get('/blg/console_main/')
 def console_main():
+    p=ParamWarper(request)
+    if not p.session.get('uid'):return redirect('/blg/console_login/')
     return template("main.html")
 
 
