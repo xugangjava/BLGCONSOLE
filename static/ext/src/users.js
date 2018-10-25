@@ -528,6 +528,8 @@ Ext.onReady(function () {
                             }
                         }],
                         columes: [
+                            {header: '时间', dataIndex: 'DT', width: 120},
+                            {header: '排名', dataIndex: 'RANK', width: 120},
                             {header: '用户ID', dataIndex: 'pk', width: 120},
                             {header: '用户名', dataIndex: 'phone', width: 120},
                             {header: '昵称', dataIndex: 'nickname', width: 120},
