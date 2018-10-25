@@ -14,7 +14,7 @@ session_opts = {
     'session.cookie_expires': 100,
     'session.data_dir': './data',
     'session.auto': True,
-    'session.timeout': 100,
+   #'session.timeout': 100,
 }
 
 os.chdir(os.path.dirname(__file__))
