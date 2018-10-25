@@ -931,6 +931,7 @@ def user_lotto_log_list():
     if p.__REASON: condition.append(" REASON like ''%%%s%%''" % p.__REASON)
     with DB() as db:
         return db.sql_padding_2(
+            start=p.int__start,
             limit=p.int__limit,
             tbName="player_lotto_log p left join usr u on p.UID=u.usrid",
             autopk='p.id',
