@@ -922,6 +922,39 @@ def user_money_log_list():
             condition=' AND '.join(condition)
         )
 
+@login_require
+@route('/blg/user_lotto_log_list/', method=['GET', 'POST'])
+def user_lotto_log_list():
+    p = ParamWarper(request)
+    condition = []
+    if p.__UID: condition.append(" UID = " + str(p.__UID))
+    if p.__REASON: condition.append(" REASON like ''%%%s%%''" % p.__REASON)
+    with DB() as db:
+        return db.sql_padding_2(
+            limit=p.int__limit,
+            tbName="player_lotto_log p left join usr u on p.UID=u.usrid",
+            autopk='p.id',
+            columNames="p.*,u.nickname,u.phone,id pk",
+            orderBy="ID DESC",
+            condition=' AND '.join(condition)
+        )
+
+@login_require
+@route('/blg/user_ranking_log_list/', method=['GET', 'POST'])
+def user_ranking_log_list():
+    p = ParamWarper(request)
+    condition = []
+    if p.__UID: condition.append(" UID = " + str(p.__UID))
+    if p.__REASON: condition.append(" REASON like ''%%%s%%''" % p.__REASON)
+    with DB() as db:
+        return db.sql_padding(
+            start=p.int__start,
+            limit=p.int__limit,
+            tbName="ranking3_log p left join usr u on p.UID=u.usrid",
+            columNames="p.*,u.*,u.usrid pk",
+            orderBy=" DT DESC,RANK ASC",
+            condition=' AND '.join(condition)
+        )
 
 #######################################################
 @login_require

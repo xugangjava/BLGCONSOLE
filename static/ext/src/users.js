@@ -57,7 +57,7 @@ Ext.onReady(function () {
                         }
                     ]
                 },
-                    {
+                {
                         xtype: 'basegrid',
                         action: '/blg/user_list/',
                         FW: 600,
@@ -220,7 +220,7 @@ Ext.onReady(function () {
                             handler: function () {
                                 var grid = Ext.getCmp(user_grid);
                                 var json = grid.getFirstSel();
-                                UINFO(json.UserID);
+                                UINFO(json.pk);
                             }
                         }],
                         columes: [
@@ -428,6 +428,124 @@ Ext.onReady(function () {
                             {header: '变更金额', dataIndex: 'CHANGE', width: 100},
                             {header: '变更原因', dataIndex: 'REASON'},
                             {header: '变更时间', dataIndex: 'LOG_TIME'}
+                        ]
+                    }
+                ]
+            }
+        },{
+            text: '用户积分日志',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'panel',
+                layout: {
+                    type: 'vbox',
+                    padding: '1',
+                    align: 'stretch',
+                    html: ''
+                },
+                border: false,
+                flex: 6,
+                nopadding: false,
+                items: [{
+                    xtype: 'form',
+                    nopadding: true,
+                    flex: 1,
+                    padding: 10,
+                    id: "user_lotto_log_search_form",
+                    defaultType: 'textfield',
+                    items: [
+                        {fieldLabel: '用户ID', name: 'UID', xtype: 'numberfield'},
+                          {fieldLabel: 'REASON', name: 'REASON'}
+                    ],
+                    buttons: [{
+                        text: '重置查询条件',
+                        handler: function () {
+                            var form = Ext.getCmp("user_lotto_log_search_form").getForm();
+                            form.reset();
+                        }
+                    },
+                        {
+                            text: '查询',
+                            handler: function () {
+                                var form = Ext.getCmp("user_lotto_log_search_form");
+                                var obj = form.getForm().getValues();
+                                var grid = Ext.getCmp("user_lotto_log_list_grid");
+                                grid.search(obj);
+                            }
+                        }
+                    ]
+                }, {
+                        xtype: 'basegrid',
+                        action: '/blg/user_lotto_log_list/',
+                        FW: 600,
+                        FH: 425,
+                        flex: 4,
+                        id: "user_lotto_log_list_grid",
+                        tbar: [],
+                        columes: [
+                            {header: 'ID', dataIndex: 'pk', width: 120},
+                            {header: '用户ID', dataIndex: 'UID', width: 120},
+                            {header: '用户名', dataIndex: 'phone', width: 120},
+                            {header: '昵称', dataIndex: 'nickname', width: 120},
+                            {header: '变更前筹码', dataIndex: 'BEFORE_LOTTO', width: 120},
+                            {header: '变更后筹码', dataIndex: 'AFTER_LOTTO', width: 100},
+                            {header: '变更金额', dataIndex: 'CHANGE', width: 100},
+                            {header: '变更原因', dataIndex: 'REASON'},
+                            {header: '变更时间', dataIndex: 'LOG_TIME'}
+                        ]
+                }]
+            }
+        },{
+            text: '用户排行榜日志',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'panel',
+                layout: {
+                    type: 'vbox',
+                    padding: '1',
+                    align: 'stretch',
+                    html: ''
+                },
+                border: false,
+                flex: 6,
+                nopadding: false,
+                items: [{
+                        xtype: 'basegrid',
+                        action: '/blg/user_ranking_log_list/',
+                        FW: 600,
+                        FH: 425,
+                        flex: 4,
+                        id: user_grid,
+                        tbar: [{
+                            text: '用户详细信息',
+                            iconCls: 'User',
+                            handler: function () {
+                                var grid = Ext.getCmp(user_grid);
+                                var json = grid.getFirstSel();
+                                UINFO(json.pk);
+                            }
+                        }],
+                        columes: [
+                            {header: '用户ID', dataIndex: 'pk', width: 120},
+                            {header: '用户名', dataIndex: 'phone', width: 120},
+                            {header: '昵称', dataIndex: 'nickname', width: 120},
+                            {header: '金钱', dataIndex: 'chips', width: 120},
+                            {header: '积分', dataIndex: 'lotto', width: 100},
+                            {header: '充值金额', dataIndex: 'moneyconsume', width: 100},
+                            {header: '筹码余额', dataIndex: 'chipslimit', width: 100},
+                            {header: '当前版本', dataIndex: 'version', width: 100},
+                            {header: '注册版本', dataIndex: 'regversion', width: 100},
+                            {header: '是否禁用', dataIndex: 'disable', width: 100},
+                            {header: '上次登录时间', dataIndex: 'lastLogintm'},
+                            {header: 'LEVEL', dataIndex: 'level'},
+                            {header: 'EXP', dataIndex: 'exp'},
+                            {header: '运气值', dataIndex: 'luck'},
+                            {header: '注册IP', dataIndex: 'regip'},
+                            {header: '注册时间', dataIndex: 'regtime'},
+                            {header: '注册渠道', dataIndex: 'versionid'},
+                            {header: '注册设备', dataIndex: 'regdevice'}
                         ]
                     }
                 ]
