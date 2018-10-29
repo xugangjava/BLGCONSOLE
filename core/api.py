@@ -458,7 +458,7 @@ def api_get_pay_way():
             # 国内ip 渠道非审核状态
             ios_pay = False
         platform = r['platform']
-        if r3['level'] < 5:
+        if r3['level'] < 3:
             open_my_card_pay = 0
     except:
         ios_pay = True
