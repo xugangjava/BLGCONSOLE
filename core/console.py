@@ -209,9 +209,12 @@ def do_del_user_info():
     p = ParamWarper(request)
     pk = p.int__pk
     with DB() as db:
+        r=db.sql_dict("select versionid from usr where usrid=%d;",pk)
+        versionid=r.get('versionid') if r else ''
         db.sql_exec('delete from usr where usrid=%d', pk)
         db.sql_exec('delete from pay where usrId=%d', pk)
         db.sql_exec("call sp_gm_count(0,0,'PAY')")
+        if versionid:db.sql_exec("call sp_gm_count_channel(0,0,'PAY','%s')",versionid)
         db.commit()
     return SUCCESS
 
