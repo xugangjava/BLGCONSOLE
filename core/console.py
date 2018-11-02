@@ -954,7 +954,7 @@ def user_ranking_log_list():
             start=p.int__start,
             limit=p.int__limit,
             tbName="ranking3_log p left join usr u on p.UID=u.usrid",
-            columNames="p.*,u.*,CAST(u.usrid as varchar(50))+CAST(p.DT as varchar(50)) pk",
+            columNames="p.*,u.*,p.DT+p.UID pk",
             orderBy=" DT DESC,RANK ASC",
         )
 
