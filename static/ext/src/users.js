@@ -427,7 +427,8 @@ Ext.onReady(function () {
                             {header: '变更后筹码', dataIndex: 'AFTER_CHIPS', width: 100},
                             {header: '变更金额', dataIndex: 'CHANGE', width: 100},
                             {header: '变更原因', dataIndex: 'REASON'},
-                            {header: '变更时间', dataIndex: 'LOG_TIME'}
+                            {header: '变更时间', dataIndex: 'LOG_TIME'},
+                            {header: '详情', dataIndex: 'REMARK'}
                         ]
                     }
                 ]
