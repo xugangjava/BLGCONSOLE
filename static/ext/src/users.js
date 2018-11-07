@@ -525,14 +525,14 @@ Ext.onReady(function () {
                             handler: function () {
                                 var grid = Ext.getCmp(user_grid);
                                 var json = grid.getFirstSel();
-                                UINFO(json.pk);
+                                UINFO(json.usrid);
                             }
                         }],
                         columes: [
                             {header: '时间', dataIndex: 'DT', width: 120},
                             {header: '排名', dataIndex: 'RANK', width: 120},
                             {header: '赢取', dataIndex: 'WIN', width: 120},
-                            {header: '用户ID', dataIndex: 'pk', width: 120},
+                            {header: '用户ID', dataIndex: 'usrid', width: 120},
                             {header: '用户名', dataIndex: 'phone', width: 120},
                             {header: '昵称', dataIndex: 'nickname', width: 120},
                             {header: '金钱', dataIndex: 'chips', width: 120},
