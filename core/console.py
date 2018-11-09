@@ -609,7 +609,7 @@ def do_edit_version():
                 UPDATE poker.channel_version 
         SET NAME = '%s' , IS_APPROVE = %d, CHANNEL_ID = %d, LAN_ID = %d ,UPDATE_LINK='%s', OPEN_MY_CARD_PAY=%d
         WHERE id=%d-- Please complete
-        ; """, p.str__VNAME, 1 if p.__IS_APPROVE == 'true' else 0, p.int__CID, p.int__LAN_ID, p.__UPDATE_LINK,
+        ; """, p.str__VNAME, 1 if p.__IS_APPROVE in ('true',1) else 0, p.int__CID, p.int__LAN_ID, p.__UPDATE_LINK,
                     p.__OPEN_MY_CARD_PAY, p.__pk)
         db.commit()
     return SUCCESS
