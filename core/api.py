@@ -812,7 +812,7 @@ def api_facebook_bind():
 
 
 @post('/api/api_facebook_bind_new/')
-def api_facebook_bind():
+def api_facebook_bind_new():
     """玩家第一次用facebook登录，或者游客第一次绑定facebook账号，则给予玩家一次性奖励"""
     p = ParamWarper(request)
     if not p.uid: return TOKEN_ERROR
