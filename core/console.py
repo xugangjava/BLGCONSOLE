@@ -791,6 +791,10 @@ def game_count_list():
         ORDER = "ASC"
         start, limit = 0, 20
         c.append('LOG_TIME>f_day(-20)')
+    if p.__start_time:
+        c.append("LOG_TIME > ''%s''" % p.__start_time)
+    if p.__end_time:
+        c.append("LOG_TIME < ''%s''" % p.__end_time)
 
     with DB() as db:
         rs = db.sql_padding(
@@ -810,7 +814,7 @@ def game_count_list():
                 YESTODAY_REG
             """,
             orderBy="ID " + ORDER,
-            condition='AND'.join(c)
+            condition=' AND '.join(c)
         )
     _cmp_game_count(rs)
     return rs
@@ -833,6 +837,10 @@ def game_count_channel_list():
         with DB() as db:
            r=db.sql_dict("select NO from channel where id=%d;",p.int__channel_id)
         c.append("CHANNEL = ''%s''" % r['NO'])
+    if p.__start_time:
+        c.append("LOG_TIME > ''%s''" % p.__start_time)
+    if p.__end_time:
+        c.append("LOG_TIME < ''%s''" % p.__end_time)
     with DB() as db:
         rs = db.sql_padding(
             start=start,
@@ -981,7 +989,7 @@ def game_chips_count_list():
             tbName="gm_chips_count",
             columNames="*",
             orderBy="ID",
-            condition='AND'.join(c)
+            condition=' AND '.join(c)
         )
 
 

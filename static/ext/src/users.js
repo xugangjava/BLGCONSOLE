@@ -489,9 +489,9 @@ Ext.onReady(function () {
                             {header: '用户ID', dataIndex: 'UID', width: 120},
                             {header: '用户名', dataIndex: 'phone', width: 120},
                             {header: '昵称', dataIndex: 'nickname', width: 120},
-                            {header: '变更前筹码', dataIndex: 'BEFORE_LOTTO', width: 120},
-                            {header: '变更后筹码', dataIndex: 'AFTER_LOTTO', width: 100},
-                            {header: '变更金额', dataIndex: 'CHANGE', width: 100},
+                            {header: '变更前积分', dataIndex: 'BEFORE_LOTTO', width: 120},
+                            {header: '变更后积分', dataIndex: 'AFTER_LOTTO', width: 100},
+                            {header: '变更积分', dataIndex: 'CHANGE', width: 100},
                             {header: '变更原因', dataIndex: 'REASON'},
                             {header: '变更时间', dataIndex: 'LOG_TIME'}
                         ]

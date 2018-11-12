@@ -100,23 +100,6 @@ Ext.onReady(function () {
                             });
                             grid.search(json);
                         }
-                    }, {
-                        iconCls: 'Databaseedit',
-                        text: '导出EXCE',
-                        handler: function () {
-                            var form = Ext.getCmp(app_analysis_search_form);
-                            var json = form.getForm().getValues();
-                            var grid = Ext.getCmp(active_log_grid);
-                            app_analysis_store.load({
-                                params: json
-                            });
-                            grid.search(json);
-                            var download = '/ffqp/console/app_analysis/?m=excel';
-                            for (var key in json) {
-                                download += '&' + key + '=' + json[key];
-                            }
-                            window.location.href = download;
-                        }
                     }]
                 }, {
                     xtype: 'linechart',
@@ -189,7 +172,7 @@ Ext.onReady(function () {
                     items: [
                         {fieldLabel: '开始时间', xtype: 'datefield', name: 'start_time', format: 'Y-m-d'},
                         {fieldLabel: '结束时间', xtype: 'datefield', name: 'end_time', format: 'Y-m-d'},
-                        {fieldLabel: '渠道',xtype: 'remotecombo', name: 'channel_id', url: '/blg/combo_channel/',value:'百家乐Online'}
+                        {fieldLabel: '渠道',xtype: 'remotecombo', name: 'channel_id', url: '/blg/combo_channel/'}
                     ],
                     buttons: [{
                         iconCls: 'Databasedelete',
@@ -209,23 +192,6 @@ Ext.onReady(function () {
                                 params: json
                             });
                             grid.search(json);
-                        }
-                    }, {
-                        iconCls: 'Databaseedit',
-                        text: '导出EXCE',
-                        handler: function () {
-                            var form = Ext.getCmp(app_analysis_search_form);
-                            var json = form.getForm().getValues();
-                            var grid = Ext.getCmp(active_log_grid);
-                            app_analysis_channel_store.load({
-                                params: json
-                            });
-                            grid.search(json);
-                            var download = '/ffqp/console/app_analysis/?m=excel';
-                            for (var key in json) {
-                                download += '&' + key + '=' + json[key];
-                            }
-                            window.location.href = download;
                         }
                     }]
                 }, {
@@ -303,18 +269,7 @@ Ext.onReady(function () {
                     id: recharge_log_search_form,
                     items: [
                         {fieldLabel: '开始时间', xtype: 'datefield', name: 'start_time', format: 'Y-m-d'},
-                        {fieldLabel: '结束时间', xtype: 'datefield', name: 'end_time', format: 'Y-m-d'},
-                        {
-                            name: 'pay_way',
-                            fieldLabel: '支付方式',
-                            xtype: 'localcombo',
-                            data: [
-                                ['ALL', 'ALL'],
-                                ['ALI_PAY', 'ALI_PAY'],
-                                ['WX_PAY', 'WX_PAY'],
-                                ['IOS_PAY', 'IOS_PAY']
-                            ]
-                        }
+                        {fieldLabel: '结束时间', xtype: 'datefield', name: 'end_time', format: 'Y-m-d'}
                     ],
                     buttons: [{
                         iconCls: 'Databaseedit',
