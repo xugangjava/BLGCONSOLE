@@ -86,7 +86,7 @@ Ext.onReady(function () {
                         text: '清空条件',
                         handler: function () {
                             var form = Ext.getCmp(app_analysis_search_form);
-                            form.reset();
+                            form.getForm().reset();
                         }
                     }, {
                         iconCls: 'Databaseedit',
@@ -179,7 +179,7 @@ Ext.onReady(function () {
                         text: '清空条件',
                         handler: function () {
                             var form = Ext.getCmp('app_analysis_channel_search_form');
-                            form.reset();
+                            form.getForm().reset();
                         }
                     }, {
                         iconCls: 'Databaseedit',

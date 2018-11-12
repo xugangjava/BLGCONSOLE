@@ -1049,9 +1049,9 @@ def gm_send_chips_count():
         start, limit = p.int__start, p.int__limit
         orderBy = "TIM DESC,COUNTS ASC"
     if p.__start_time:
-        condition.append("TIM > ''%s''" % p.__start_time)
+        condition.append("TIM >= ''%s''" % p.__start_time)
     if p.__end_time:
-        condition.append("TIM < ''%s''" % p.__end_time)
+        condition.append("TIM <= ''%s''" % p.__end_time)
     with DB() as db:
         return db.sql_padding(
             start=start,
