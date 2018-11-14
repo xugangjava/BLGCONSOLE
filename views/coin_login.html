@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>百乐宫币商管理后台</title>
+    <!--ExtJs框架开始-->
+    <script type="text/javascript" src="/static/ext/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="/static/ext/ext-all.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/ext/resources/css/ext-all.css"/>
+    <script type="text/javascript">
+        Ext.onReady(function () {
+            //初始化标签中的Ext:Qtip属性。
+            Ext.QuickTips.init();
+            Ext.form.Field.prototype.msgTarget = 'side';
+            //提交按钮处理方法
+            var btnsubmitclick = function () {
+                if (form.getForm().isValid()) {
+                    form.getForm().submit({
+                        method: "POST",
+                        success: function (form, action) {
+                            var result = Ext.util.JSON.decode(action.response.responseText);
+                            window.location.href = '/coin/console_main/';
+                        },
+                        failure: function (form, action) {
+                            var result = Ext.util.JSON.decode(action.response.responseText);
+                            if (result.message) {
+                                Ext.Msg.alert('提示', result.message);
+                                return;
+                            }
+                            Ext.Msg.alert('提示', "用户名或密码错误");
+                        }
+                    });
+                }
+            };
+            //重置按钮"点击时"处理方法
+            var btnresetclick = function () {
+                form.getForm().reset();
+            };
+            //提交按钮
+            var btnsubmit = new Ext.Button({
+                text: '提 交',
+                handler: btnsubmitclick
+            });
+            //重置按钮
+            var btnreset = new Ext.Button({
+                text: '重 置',
+                handler: btnresetclick
+            });
+            //用户名input
+            var txtusername = new Ext.form.TextField({
+                width: 280,
+                allowBlank: false,
+                maxLength: 20,
+                name: 'username',
+                fieldLabel: '用户名',
+                blankText: '请输入用户名',
+                maxLengthText: '用户名不能超过20个字符'
+            });
+            //密码input
+            var txtpassword = new Ext.form.TextField({
+                width: 280,
+                allowBlank: false,
+                maxLength: 20,
+                inputType: 'password',
+                name: 'password',
+                fieldLabel: '密　码',
+                blankText: '请输入密码',
+                maxLengthText: '密码不能超过20个字符'
+            });
+
+            //验证码input
+            var txtcheckcode = new Ext.form.TextField({
+                fieldLabel: '验证码',
+                id: 'checkcode',
+                name: 'code',
+                allowBlank: false,
+                width: 76,
+                blankText: '请输入验证码！',
+                maxLength: 4,
+                maxLengthText: '验证码不能超过4个字符!'
+            });
+
+            //表单
+            var form = new Ext.form.FormPanel({
+                url: '/blg/console_login/',
+                labelAlign: 'right',
+                labelWidth: 45,
+                frame: true,
+                cls: 'loginform',
+                buttonAlign: 'center',
+                bodyStyle: 'padding:6px 0px 0px 15px',
+                items: [txtusername, txtpassword, txtcheckcode],
+                buttons: [btnsubmit, btnreset]
+            });
+
+            //窗体
+            var win = new Ext.Window({
+                title: '百乐宫币商管理后台',
+                iconCls: 'loginicon',
+                plain: true,
+                width: 400,
+                height: 200,
+                resizable: false,
+                draggable: false,
+                shadow: true,
+                modal: true,
+                closable: false,
+                animCollapse: true,
+                items: form
+            });
+            win.show();
+            //创建验证码
+            var checkcode = Ext.getDom('checkcode');
+            var checkimage = Ext.get(checkcode.parentNode);
+            checkimage.createChild({
+                tag: 'img',
+                src: '/blg/console_captcha/',
+                align: 'absbottom',
+                style: 'padding-left:23px;cursor:pointer;',
+                onclick:"javascript:this.src='/blg/console_captcha/?r='+Math.random();"
+            });
+        });
+    </script>
+</head>
+<body></body>
+</html>

@@ -2,6 +2,7 @@ import bottle
 from core.api import *
 from core.console import *
 from core.apis import *
+from core.coin_console import *
 
 def run_bottle():
     from beaker.middleware import SessionMiddleware

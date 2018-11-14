@@ -83,13 +83,14 @@ Ext.onReady(function () {
                                     items: [
                                         {fieldLabel: '用户ID', name: 'pk', readOnly: true},
                                         {fieldLabel: '用户名', name: 'phone', readOnly: true, allowBlank: true},
-                                        {fieldLabel: '昵称', name: 'nickname', readOnly: true},
+                                        {fieldLabel: '昵称', name: 'nickname'},
                                         {fieldLabel: '金钱', name: 'chips'},
                                         {fieldLabel: '积分', name: 'lotto'},
                                         {fieldLabel: '运气值', name: 'luck'},
                                         {fieldLabel: '等级', name: 'level'},
                                         {fieldLabel: '经验', name: 'exp'},
                                         {fieldLabel: '渠道', name: 'versionid'},
+                                        {fieldLabel: '充值金额', name: 'moneyconsume'},
                                         {fieldLabel: 'DISABLE', name: 'disable'}
                                     ],
                                     success: function () {

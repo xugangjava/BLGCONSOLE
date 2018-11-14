@@ -24,7 +24,7 @@ def login_require(func):
         p = ParamWarper(request)
         if not p.session_uid:
             return redirect('/blg/console_login/')
-        return func(**kargs)
+        return func(*args, **kargs)
 
     return wrapper
 
@@ -192,13 +192,13 @@ def do_edit_user_info():
     with DB() as db:
         db.sql_exec("""
             update usr 
-            set chips=%d,lotto=%d,luck=%d,level=%d,exp=%d ,versionid='%s',disable=%d 
+            set chips=%d,lotto=%d,luck=%d,level=%d,exp=%d ,versionid='%s',disable=%d ,moneyconsume=%d,nickname='%s'
             where usrid=%d
         """, p.int__chips,
                     p.int__lotto,
                     p.int__luck,
                     p.int__level,
-                    p.int__exp, p.__versionid, p.int__disable, p.int__pk)
+                    p.int__exp, p.__versionid, p.int__disable,p.__moneyconsume,p.__nickname, p.int__pk)
         db.commit()
     return SUCCESS
 
@@ -1061,3 +1061,162 @@ def gm_send_chips_count():
             orderBy=orderBy,
             condition=' AND '.join(condition)
         )
+
+
+
+#######################################################
+@login_require
+@route('/blg/coin_usr_list/', method=['GET', 'POST'])
+def blg_coin_usr_list():
+    p=ParamWarper(request)
+
+    def add_coin_usr():
+        USRNAME,NICKNAME,CHIPS,PWD=p.__USRNAME,p.__NICKNAME,p.__CHIPS,p.__PWD
+        with DB() as db:
+            if db.sql_exists("select 1 from coin_usr where USRNAME='%s';",USRNAME):
+                return Fail("用户名已存在")
+            db.sql_exec("""
+                INSERT INTO poker.coin_usr
+                (USRNAME, CHIPS, PWD, NICKNAME, ENABLE) 
+                VALUES ('%s', %d, '%s', '%s', 1);
+            """,USRNAME,CHIPS,PWD,NICKNAME)
+            db.commit()
+            return SUCCESS
+
+    def edit_coin_usr():
+        ID, USRNAME, NICKNAME, CHIPS, PWD,ENABLE =\
+            p.__ID, p.__USRNAME, p.__NICKNAME, p.__CHIPS, p.__PWD,p.__ENABLE
+        with DB() as db:
+            if db.sql_exists("select 1 from coin_usr where USRNAME='%s' AND ID!=%d;",USRNAME,ID):
+                return Fail("用户名已存在")
+            r = db.sql_dict("select CHIPS from coin_usr where ID=%d;", ID)
+            before_chips = r['CHIPS']
+            db.sql_exec("""
+                UPDATE poker.coin_usr 
+                SET USRNAME = '%s', CHIPS = %d, PWD = '%s', NICKNAME = '%s',ENABLE=%d
+                WHERE ID=%d; """,USRNAME,CHIPS,PWD,NICKNAME,ENABLE,ID)
+            after_chips=CHIPS
+            db.sql_exec("""
+            INSERT INTO poker.coin_usr_chips_log( CID, BEFORE_CHIPS, AFTER_CHIPS, CHANGE_CHIPS, REASON) 
+            VALUES (%d, %d, %d, %d, '%s');""", ID, before_chips, after_chips, after_chips-before_chips, "管理员修改")
+            db.commit()
+            return SUCCESS
+
+    if p.__add:return add_coin_usr()
+    if p.__edit:return edit_coin_usr()
+    with DB() as db:
+        return db.sql_no_padding("select ID pk, coin_usr.* from coin_usr")
+
+
+############################################################################################
+
+
+@login_require
+@route('/blg/coin_usr_chips_change_log/', method=['GET', 'POST'])
+def blg_coin_usr_chips_change_log():
+    p = ParamWarper(request)
+    condition = []
+    with DB() as db:
+        return db.sql_padding(
+            start=p.int__start,
+            limit=p.int__limit,
+            tbName="""
+                 coin_usr_chips_log l
+                 LEFT JOIN coin_usr c ON l.CID = c.ID
+                 LEFT JOIN usr u ON l.UID = u.usrid
+            """,
+            columNames="""
+                 c.USRNAME CUSRNAME
+                ,c.ID
+                ,c.CHIPS CCHIPS
+                ,c.NICKNAME CNICKNAME
+                ,l.CID
+                ,l.BEFORE_CHIPS
+                ,l.AFTER_CHIPS
+                ,l.CHANGE_CHIPS
+                ,l.REASON
+                ,u.usrid
+                ,u.nickname
+                ,u.curtitle
+                ,u.moneyconsume
+                ,u.chips
+            """,
+            orderBy='c.ID DESC',
+            condition=' AND '.join(condition)
+        )
+
+
+@login_require
+@route('/blg/coin_usr_chips_trade_log/', method=['GET', 'POST'])
+def blg_coin_usr_chips_trade_log():
+    p = ParamWarper(request)
+    condition = []
+    with DB() as db:
+        return db.sql_padding(
+            start=p.int__start,
+            limit=p.int__limit,
+            tbName="""
+                         coin_usr_chips_log l
+                         LEFT JOIN coin_usr c ON l.CID = c.ID
+                         LEFT JOIN usr u ON l.UID = u.usrid
+                    """,
+            columNames="""
+                         c.USRNAME CUSRNAME
+                        ,c.ID
+                        ,c.CHIPS CCHIPS
+                        ,c.NICKNAME CNICKNAME
+                        ,l.CID
+                        ,l.BEFORE_CHIPS
+                        ,l.AFTER_CHIPS
+                        ,l.CHANGE_CHIPS
+                        ,l.REASON
+                        ,u.usrid
+                        ,u.nickname
+                        ,u.curtitle
+                        ,u.moneyconsume
+                        ,u.chips
+                    """,
+            orderBy='c.ID DESC',
+            condition=' AND '.join(condition)
+        )
+
+
+
+@login_require
+@route('/blg/coin_usr_chips_config/', method=['GET', 'POST'])
+def blg_coin_usr_chips_config():
+    p = ParamWarper(request)
+
+    def add_cfg():
+        with DB() as db:
+            db.sql_exec("""
+                INSERT INTO poker.coin_usr_chips_config
+                (CHIPS, RMB, NT) 
+                VALUES (%d, %f, %f);
+            """,p.__CHIPS,p.__RMB,p.__NT)
+            db.commit()
+            return SUCCESS
+
+    def delete_cfg():
+        with DB() as db:
+            db.sql_exec("delete from coin_usr_chips_config where ID=%d;",p.__ID)
+            db.commit()
+        return SUCCESS
+
+    def edit_cfg():
+        with DB() as db:
+            db.sql_exec("""
+                UPDATE poker.coin_usr_chips_config 
+                SET CHIPS = %d , RMB = %f, NT = %f 
+                WHERE ID=%d;
+            """,p.__CHIPS,p.__RMB,p.__NT,p.__ID)
+            db.commit()
+        return SUCCESS
+
+    if p.__add:return add_cfg()
+    if p.__edit:return edit_cfg()
+    if p.__delete:return delete_cfg()
+
+    with DB() as db:
+        return db.sql_no_padding("select * from coin_usr_chips_config")
+#######################################################

@@ -7,7 +7,7 @@ from core.console import *
 from core.apis import *
 from beaker.middleware import SessionMiddleware
 from core.apis import *
- 
+from core.coin_console import *
 
 session_opts = {
     'session.type': 'file',
