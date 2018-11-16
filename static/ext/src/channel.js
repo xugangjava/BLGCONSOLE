@@ -221,8 +221,9 @@ Ext.onReady(function () {
                             items: [
                                 {fieldLabel: '发送次数', name: 'repeatcount'},
                                 {fieldLabel: '时间间隔(秒)', name: 'repeatgap'},
-                                {fieldLabel: '消息内容', name: 'content', xtype: 'textarea'},
-                                {fieldLabel: '消息内容EN', name: 'en_content', xtype: 'textarea'}
+                                {fieldLabel: '发送渠道', name: 'channel',allowBlank:true},
+                                {fieldLabel: '消息内容', name: 'content', xtype: 'textarea',allowBlank:true},
+                                {fieldLabel: '消息内容EN', name: 'en_content', xtype: 'textarea',allowBlank:true}
                             ],
                             success: function () {
                                 alert('添加成功!');
@@ -252,7 +253,8 @@ Ext.onReady(function () {
                     {header: 'ID', dataIndex: 'pk', width: 70},
                     {header: '消息内容', dataIndex: 'content', width: 240},
                     {header: '发送次数', dataIndex: 'repeatcount', width: 120},
-                    {header: '上次发送时间', dataIndex: 'noticetime', width: 120}
+                    {header: '上次发送时间', dataIndex: 'noticetime', width: 120},
+                    {header: '发送渠道', dataIndex: 'channel', width: 120}
                 ]
             }
         }]

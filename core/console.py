@@ -634,7 +634,7 @@ def do_del_version():
 def race_lamp_list():
     with DB() as db:
         return db.sql_no_padding("""
-            SELECT id pk, repeatcount, repeatgap, content, noticetime, handler FROM gm_notice
+            SELECT id pk, gm_notice.* FROM gm_notice
         """)
 
 
@@ -651,6 +651,7 @@ def do_add_race_lamp():
               ,noticetime
               ,handler
               ,en_content
+              ,channel
             ) VALUES (
                %d -- repeatcount - IN int(11)
               ,%d -- repeatgap - IN int(11)
@@ -658,8 +659,9 @@ def do_add_race_lamp():
               ,now()  -- noticetime - IN timestamp
               ,'admin' -- handler - IN varchar(255)
               ,'%s'
+              ,'%s'
             )
-        """, p.__repeatcount, p.__repeatgap, p.__content, p.__en_content)
+        """, p.__repeatcount, p.__repeatgap, p.__content, p.__en_content,p.__channel)
         db.commit()
     return SUCCESS
 
@@ -1127,6 +1129,7 @@ def blg_coin_usr_chips_change_log():
             """,
             columNames="""
                  c.USRNAME CUSRNAME
+                ,l.ID pk
                 ,c.ID
                 ,c.CHIPS CCHIPS
                 ,c.NICKNAME CNICKNAME
@@ -1141,7 +1144,7 @@ def blg_coin_usr_chips_change_log():
                 ,u.moneyconsume
                 ,u.chips
             """,
-            orderBy='c.ID DESC',
+            orderBy='l.ID DESC',
             condition=' AND '.join(condition)
         )
 
@@ -1156,27 +1159,28 @@ def blg_coin_usr_chips_trade_log():
             start=p.int__start,
             limit=p.int__limit,
             tbName="""
-                         coin_usr_chips_log l
+                         coin_usr_trade_log l
                          LEFT JOIN coin_usr c ON l.CID = c.ID
                          LEFT JOIN usr u ON l.UID = u.usrid
                     """,
             columNames="""
                          c.USRNAME CUSRNAME
                         ,c.ID
+                        ,l.ID pk
                         ,c.CHIPS CCHIPS
                         ,c.NICKNAME CNICKNAME
                         ,l.CID
-                        ,l.BEFORE_CHIPS
-                        ,l.AFTER_CHIPS
-                        ,l.CHANGE_CHIPS
-                        ,l.REASON
+                        ,l.PRE_CHIPS
+                        ,l.RMB
+                        ,l.CHIPS
+                        ,l.TM
                         ,u.usrid
                         ,u.nickname
                         ,u.curtitle
                         ,u.moneyconsume
                         ,u.chips
                     """,
-            orderBy='c.ID DESC',
+            orderBy='l.ID DESC',
             condition=' AND '.join(condition)
         )
 

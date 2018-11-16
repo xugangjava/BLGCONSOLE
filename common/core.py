@@ -79,6 +79,10 @@ class ParamWarper(object):
     def session_uid(self):
         return self.session.get('uid')
 
+    @property
+    def session_cuid(self):
+        return self.session.get('cuid')
+
     def __getattr__(self, item):
         if not '__' in item:
             return ParamWarper.__getattr__(self, item)
