@@ -178,7 +178,8 @@ def user_list():
                 `usr`.`exp`,
                 `usr`.`chipslimit`,
                 `usr`.`disable`,
-                `usr`.`level`
+                `usr`.`level`,
+                `usr`.`test`
             """,
             orderBy='`usr`.`usrid` DESC',
             condition=' AND '.join(condition)
@@ -192,13 +193,13 @@ def do_edit_user_info():
     with DB() as db:
         db.sql_exec("""
             update usr 
-            set chips=%d,lotto=%d,luck=%d,level=%d,exp=%d ,versionid='%s',disable=%d ,moneyconsume=%d,nickname='%s'
+            set chips=%d,lotto=%d,luck=%d,level=%d,exp=%d ,versionid='%s',disable=%d ,moneyconsume=%d,nickname='%s',test=%d
             where usrid=%d
         """, p.int__chips,
                     p.int__lotto,
                     p.int__luck,
                     p.int__level,
-                    p.int__exp, p.__versionid, p.int__disable,p.__moneyconsume,p.__nickname, p.int__pk)
+                    p.int__exp, p.__versionid, p.int__disable,p.__moneyconsume,p.__nickname, p.__test, p.int__pk)
         db.commit()
     return SUCCESS
 

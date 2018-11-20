@@ -91,7 +91,8 @@ Ext.onReady(function () {
                                         {fieldLabel: '经验', name: 'exp'},
                                         {fieldLabel: '渠道', name: 'versionid'},
                                         {fieldLabel: '充值金额', name: 'moneyconsume'},
-                                        {fieldLabel: 'DISABLE', name: 'disable'}
+                                        {fieldLabel: 'DISABLE', name: 'disable'},
+                                        {fieldLabel: 'TEST', name: 'test'}
                                     ],
                                     success: function () {
                                         alert('修改成功!');
@@ -243,6 +244,7 @@ Ext.onReady(function () {
                             {header: '注册时间', dataIndex: 'regtime'},
                             {header: '注册渠道', dataIndex: 'versionid'},
                             {header: '注册设备', dataIndex: 'regdevice'},
+                            {header: '测试账号', dataIndex: 'test',renderer:yesno}
                         ]
                     }
                 ]
