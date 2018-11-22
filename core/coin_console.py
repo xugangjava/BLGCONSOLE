@@ -33,7 +33,7 @@ def coin_login_require_ajax(func):
     def wrapper(*args, **kargs):
         p = ParamWarper(request)
         if not p.session_cuid:
-            return Fail("用户登陆超时，请重新登陆")
+            return Fail("用户登陆超时，请重新登陆",SESSSION_TIME_OUT=1)
         return func(*args, **kargs)
     return wrapper
 
@@ -169,15 +169,47 @@ def coin_trade_log():
 def coin_chips_change_log():
     """筹码变动日志"""
     p = ParamWarper(request)
-    condition = []
+    c = []
+    if p.__uid:
+        c.append("u.usrid=%d" % p.int__uid)
+    if p.__name:
+        c.append("u.nickname like ''%%%s%%''" % p.__name)
+    if p.__nick:
+        c.append("u.nickname like ''%%%s%%''" % p.__nick)
+    if p.__start_time:
+        c.append("l.DT > ''%s''" % p.__start_time)
+    if p.__end_time:
+        c.append("l.DT < ''%s''" % p.__end_time)
+    c.append("l.CID=%d" % p.session_cuid)
     with DB() as db:
         return db.sql_padding(
             start=p.int__start,
             limit=p.int__limit,
-            tbName=" coin_usr_trade_log ",
-            columNames="*",
-            orderBy='ID DESC',
-            condition=' AND '.join(condition)
+            tbName="""
+                     coin_usr_chips_log l
+                     LEFT JOIN coin_usr c ON l.CID = c.ID
+                     LEFT JOIN usr u ON l.UID = u.usrid
+                """,
+            columNames="""
+                     c.USRNAME CUSRNAME
+                    ,l.ID pk
+                    ,c.ID
+                    ,c.CHIPS CCHIPS
+                    ,c.NICKNAME CNICKNAME
+                    ,l.CID
+                    ,l.BEFORE_CHIPS
+                    ,l.AFTER_CHIPS
+                    ,l.CHANGE_CHIPS
+                    ,l.REASON
+                    ,l.DT
+                    ,u.usrid
+                    ,u.nickname
+                    ,u.curtitle
+                    ,u.moneyconsume
+                    ,u.chips
+                """,
+            orderBy='l.ID DESC',
+            condition=' AND '.join(c)
         )
 
 
@@ -251,3 +283,53 @@ def coin_pay_order_list():
             condition=condition,
             orderBy='  p.tim DESC '
         )
+
+
+
+
+@route('/coin/race_lamp_list/', method=['GET', 'POST'])
+@coin_login_require
+def coin_race_lamp_list():
+    p=ParamWarper(request)
+    def add():
+        with DB() as db:
+            r=db.sql_dict("select GAME_UID from coin_usr where ID=%d;",p.session_cuid)
+            db.sql_exec("""
+                INSERT INTO poker.gm_coin_notice(
+                   repeatcount
+                  ,repeatgap
+                  ,content
+                  ,noticetime
+                  ,handler
+                  ,en_content
+                  ,channel
+                  ,uid
+                ) VALUES (
+                   %d -- repeatcount - IN int(11)
+                  ,%d -- repeatgap - IN int(11)
+                  ,'%s' -- content - IN varchar(256)
+                  ,now()  -- noticetime - IN timestamp
+                  ,'admin' -- handler - IN varchar(255)
+                  ,'%s'
+                  ,'%s'
+                  ,%d
+                )
+            """, p.__repeatcount, p.__repeatgap, p.__content, p.__en_content, p.__channel,r['GAME_UID'])
+            db.commit()
+        return SUCCESS
+
+    def delete():
+        with DB() as db:
+            db.sql_exec("""
+                   delete from poker.gm_coin_notice where id=%d
+               """, p.int__pk)
+            db.commit()
+        return SUCCESS
+
+    if p.__add==1:return add()
+    if p.__del==1:return delete()
+    with DB() as db:
+        return db.sql_no_padding("""
+            SELECT id pk, gm_coin_notice.* FROM gm_coin_notice
+        """)
+

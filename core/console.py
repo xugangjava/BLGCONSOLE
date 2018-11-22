@@ -28,6 +28,15 @@ def login_require(func):
 
     return wrapper
 
+def login_require_ajax(func):
+    # 定义包装函数
+    def wrapper(*args, **kargs):
+        p = ParamWarper(request)
+        if not p.session_uid:
+            return Fail("用户登陆超时，请重新登陆",SESSSION_TIME_OUT=1)
+        return func(*args, **kargs)
+    return wrapper
+
 
 ##########################################################
 @route('/static/<filepath:path>')
@@ -88,8 +97,8 @@ def console_main():
 
 
 #######################################################
-@login_require
 @get('/blg/user_info/')
+@login_require_ajax
 def user_info():
     p = ParamWarper(request)
     with DB() as db:
@@ -140,8 +149,9 @@ def user_info():
 
 
 # users
-@login_require
+
 @route('/blg/user_list/', method=['GET', 'POST'])
+@login_require_ajax
 def user_list():
     p = ParamWarper(request)
     with DB() as db:
@@ -186,8 +196,9 @@ def user_list():
         )
 
 
-@login_require
+
 @post('/blg/do_edit_user_info/')
+@login_require_ajax
 def do_edit_user_info():
     p = ParamWarper(request)
     with DB() as db:
@@ -204,8 +215,9 @@ def do_edit_user_info():
     return SUCCESS
 
 
-@login_require
+
 @post('/blg/do_del_user_info/')
+@login_require_ajax
 def do_del_user_info():
     p = ParamWarper(request)
     pk = p.int__pk
@@ -220,8 +232,9 @@ def do_del_user_info():
     return SUCCESS
 
 
-@login_require
+
 @post('/blg/do_send_user_email/')
+@login_require_ajax
 def do_send_user_email():
     p = ParamWarper(request)
     email_title, email_money, email_content = \
@@ -261,8 +274,9 @@ def do_send_user_email():
     return SUCCESS
 
 
-@login_require
+
 @route('/blg/user_suggest_list/', method=['GET', 'POST'])
+@login_require_ajax
 def user_suggest_list():
     p = ParamWarper(request)
     with DB() as db:
@@ -284,8 +298,9 @@ def user_suggest_list():
         )
 
 
-@login_require
+
 @post('/blg/do_reply_user_suggest/')
+@login_require_ajax
 def do_reply_user_suggest():
     p = ParamWarper(request)
     reply_id, question = p.int__id, p.__question
@@ -324,8 +339,8 @@ def exchange_approve_list():
         )
 
 
-@login_require
 @route('/blg/exchange_config_list/', method=['GET', 'POST'])
+@login_require_ajax
 def exchange_config_list():
     with DB() as db:
         return db.sql_no_padding("""
@@ -345,8 +360,9 @@ def exchange_config_list():
         """)
 
 
-@login_require
+
 @post('/blg/exchange_config_list_add/')
+@login_require_ajax
 def exchange_config_list_add():
     p = ParamWarper(request)
     with DB() as db:
@@ -387,8 +403,9 @@ def exchange_config_list_add():
     return SUCCESS
 
 
-@login_require
+
 @post('/blg/exchange_config_list_edit/')
+@login_require_ajax
 def exchange_config_list_edit():
     p = ParamWarper(request)
     with DB() as db:
@@ -418,8 +435,9 @@ def exchange_config_list_edit():
     return SUCCESS
 
 
-@login_require
+
 @post('/blg/exchange_config_list_del/')
+@login_require_ajax
 def exchange_config_list_del():
     p = ParamWarper(request)
     with DB() as db:
@@ -430,8 +448,8 @@ def exchange_config_list_del():
 
 # 兑换审核
 
-@login_require
 @route('/blg/exchange_approve_list/', method=['GET', 'POST'])
+@login_require_ajax
 def exchange_approve_list():
     """兑换审核列表"""
     p = ParamWarper(request)
@@ -464,8 +482,9 @@ def exchange_approve_list():
         )
 
 
-@login_require
+
 @post('/blg/do_exchange_approve/')
+@login_require_ajax
 def do_exchange_approve():
     """兑换审核"""
     p = ParamWarper(request)
@@ -478,8 +497,9 @@ def do_exchange_approve():
     return SUCCESS
 
 
-@login_require
+
 @route('/blg/exchange_approve_log_list/', method=['GET', 'POST'])
+@login_require_ajax
 def exchange_approve_log_list():
     """兑换审核日志"""
     p = ParamWarper(request)
@@ -520,8 +540,8 @@ def exchange_approve_log_list():
 
 #######################################################
 # 版本控制
-@login_require
 @route('/blg/channel_list/', method=['GET', 'POST'])
+@login_require_ajax
 def channel_list():
     with DB() as db:
         return db.sql_no_padding("""
@@ -540,8 +560,9 @@ def channel_list():
         """)
 
 
-@login_require
+
 @post('/blg/do_edit_channel/')
+@login_require_ajax
 def do_edit_channel():
     p = ParamWarper(request)
     with DB() as db:
@@ -563,8 +584,9 @@ def do_edit_channel():
     return SUCCESS
 
 
-@login_require
+
 @route('/blg/version_list/', method=['GET', 'POST'])
+@login_require_ajax
 def version_list():
     with DB() as db:
         return db.sql_no_padding("""
@@ -587,8 +609,10 @@ def version_list():
         """)
 
 
-@login_require
+
+
 @post('/blg/do_add_version/')
+@login_require_ajax
 def do_add_version():
     p = ParamWarper(request)
     with DB() as db:
@@ -601,8 +625,9 @@ def do_add_version():
     return SUCCESS
 
 
-@login_require
+
 @post('/blg/do_edit_version/')
+@login_require_ajax
 def do_edit_version():
     p = ParamWarper(request)
     with DB() as db:
@@ -616,8 +641,9 @@ def do_edit_version():
     return SUCCESS
 
 
-@login_require
+
 @post('/blg/do_del_version/')
+@login_require_ajax
 def do_del_version():
     p = ParamWarper(request)
     with DB() as db:
@@ -630,8 +656,9 @@ def do_del_version():
 #######################################################
 # 跑马灯
 
-@login_require
+
 @route('/blg/race_lamp_list/', method=['GET', 'POST'])
+@login_require_ajax
 def race_lamp_list():
     with DB() as db:
         return db.sql_no_padding("""
@@ -639,8 +666,9 @@ def race_lamp_list():
         """)
 
 
-@login_require
+
 @post('/blg/do_add_race_lamp/')
+@login_require_ajax
 def do_add_race_lamp():
     p = ParamWarper(request)
     with DB() as db:
@@ -667,9 +695,10 @@ def do_add_race_lamp():
     return SUCCESS
 
 
-@login_require
+
 @post('/blg/do_del_race_lamp/')
-def do_add_race_lamp():
+@login_require_ajax
+def do_del_race_lamp():
     p = ParamWarper(request)
     with DB() as db:
         db.sql_exec("""
@@ -681,8 +710,9 @@ def do_add_race_lamp():
 
 #######################################################
 # 订单
-@login_require
+
 @route('/blg/pay_order_list/', method=['GET', 'POST'])
+@login_require_ajax
 def pay_order_list():
     p = ParamWarper(request)
     c = []
@@ -741,8 +771,8 @@ def pay_order_list():
 
 
 #######################################################
-@login_require
 @route('/blg/combo_channel/', method=['GET', 'POST'])
+@login_require_ajax
 def combo_channel():
     with DB() as db:
         return db.sql_combo("select ID pk,NAME name from channel")
@@ -782,8 +812,9 @@ def _cmp_game_count(rs):
             r['ARPPU'] = 0
 
 
-@login_require
+
 @route('/blg/game_count_list/', method=['GET', 'POST'])
+@login_require_ajax
 def game_count_list():
     p = ParamWarper(request)
     c = []
@@ -822,8 +853,9 @@ def game_count_list():
     _cmp_game_count(rs)
     return rs
 
-@login_require
+
 @route('/blg/game_count_channel_list/', method=['GET', 'POST'])
+@login_require_ajax
 def game_count_channel_list():
     p = ParamWarper(request)
     c = []
@@ -872,8 +904,9 @@ def game_count_channel_list():
 #######################################################
 # 头像审核
 
-@login_require
+
 @route('/blg/users_avastar_approve_list/', method=['GET', 'POST'])
+@login_require_ajax
 def users_avastar_approve_list():
     p = ParamWarper(request)
     with DB() as db:
@@ -886,8 +919,9 @@ def users_avastar_approve_list():
         )
 
 
-@login_require
+
 @post('/blg/do_users_avastar_approve/')
+@login_require_ajax
 def do_users_avastar_approve():
     p = ParamWarper(request)
     ids = p.ids__ids
@@ -906,8 +940,9 @@ def do_users_avastar_approve():
 
 #######################################################
 
-@login_require
+
 @route('/blg/game_win_count_list/', method=['GET', 'POST'])
+@login_require_ajax
 def game_win_count_list():
     p = ParamWarper(request)
     with DB() as db:
@@ -920,8 +955,8 @@ def game_win_count_list():
         )
 
 
-@login_require
 @route('/blg/user_money_log_list/', method=['GET', 'POST'])
+@login_require_ajax
 def user_money_log_list():
     p = ParamWarper(request)
     condition = []
@@ -938,8 +973,9 @@ def user_money_log_list():
             condition=' AND '.join(condition)
         )
 
-@login_require
+
 @route('/blg/user_lotto_log_list/', method=['GET', 'POST'])
+@login_require_ajax
 def user_lotto_log_list():
     p = ParamWarper(request)
     condition = []
@@ -956,8 +992,9 @@ def user_lotto_log_list():
             condition=' AND '.join(condition)
         )
 
-@login_require
+
 @route('/blg/user_ranking_log_list/', method=['GET', 'POST'])
+@login_require_ajax
 def user_ranking_log_list():
     p = ParamWarper(request)
     with DB() as db:
@@ -970,8 +1007,9 @@ def user_ranking_log_list():
         )
 
 #######################################################
-@login_require
+
 @route('/blg/game_chips_count_list/', method=['GET', 'POST'])
+@login_require_ajax
 def game_chips_count_list():
     p = ParamWarper(request)
     if not p.__chart:
@@ -996,8 +1034,9 @@ def game_chips_count_list():
         )
 
 
-@login_require
+
 @route('/blg/game_play_info/', method=['GET', 'POST'])
+@login_require_ajax
 def game_play_info():
     p = ParamWarper(request)
     condition = []
@@ -1039,8 +1078,9 @@ def game_play_info():
         )
 
 
-@login_require
+
 @route('/blg/gm_send_chips_count/', method=['GET', 'POST'])
+@login_require_ajax
 def gm_send_chips_count():
     p = ParamWarper(request)
     condition = []
@@ -1068,8 +1108,9 @@ def gm_send_chips_count():
 
 
 #######################################################
-@login_require
+
 @route('/blg/coin_usr_list/', method=['GET', 'POST'])
+@login_require_ajax
 def blg_coin_usr_list():
     p=ParamWarper(request)
 
@@ -1087,8 +1128,8 @@ def blg_coin_usr_list():
             return SUCCESS
 
     def edit_coin_usr():
-        ID, USRNAME, NICKNAME, CHIPS, PWD,ENABLE =\
-            p.__ID, p.__USRNAME, p.__NICKNAME, p.__CHIPS, p.__PWD,p.__ENABLE
+        ID, USRNAME, NICKNAME, CHIPS, PWD,ENABLE ,GAME_UID=\
+            p.__ID, p.__USRNAME, p.__NICKNAME, p.__CHIPS, p.__PWD,p.__ENABLE,p.__GAME_UID
         with DB() as db:
             if db.sql_exists("select 1 from coin_usr where USRNAME='%s' AND ID!=%d;",USRNAME,ID):
                 return Fail("用户名已存在")
@@ -1096,8 +1137,8 @@ def blg_coin_usr_list():
             before_chips = r['CHIPS']
             db.sql_exec("""
                 UPDATE poker.coin_usr 
-                SET USRNAME = '%s', CHIPS = %d, PWD = '%s', NICKNAME = '%s',ENABLE=%d
-                WHERE ID=%d; """,USRNAME,CHIPS,PWD,NICKNAME,ENABLE,ID)
+                SET USRNAME = '%s', CHIPS = %d, PWD = '%s', NICKNAME = '%s',ENABLE=%d,GAME_UID=%d
+                WHERE ID=%d; """,USRNAME,CHIPS,PWD,NICKNAME,ENABLE,GAME_UID,ID)
             after_chips=CHIPS
             db.sql_exec("""
             INSERT INTO poker.coin_usr_chips_log( CID, BEFORE_CHIPS, AFTER_CHIPS, CHANGE_CHIPS, REASON) 
@@ -1114,11 +1155,23 @@ def blg_coin_usr_list():
 ############################################################################################
 
 
-@login_require
+
 @route('/blg/coin_usr_chips_change_log/', method=['GET', 'POST'])
+@login_require_ajax
 def blg_coin_usr_chips_change_log():
     p = ParamWarper(request)
-    condition = []
+    c = []
+    if p.__uid:
+        c.append("u.usrid=%d" % p.int__uid)
+    if p.__name:
+        c.append("u.nickname like ''%%%s%%''" % p.__name)
+    if p.__nick:
+        c.append("u.nickname like ''%%%s%%''" % p.__nick)
+    if p.__start_time:
+        c.append("l.DT > ''%s''" % p.__start_time)
+    if p.__end_time:
+        c.append("l.DT < ''%s''" % p.__end_time)
+
     with DB() as db:
         return db.sql_padding(
             start=p.int__start,
@@ -1139,6 +1192,7 @@ def blg_coin_usr_chips_change_log():
                 ,l.AFTER_CHIPS
                 ,l.CHANGE_CHIPS
                 ,l.REASON
+                ,l.DT
                 ,u.usrid
                 ,u.nickname
                 ,u.curtitle
@@ -1146,12 +1200,13 @@ def blg_coin_usr_chips_change_log():
                 ,u.chips
             """,
             orderBy='l.ID DESC',
-            condition=' AND '.join(condition)
+            condition=' AND '.join(c)
         )
 
 
-@login_require
+
 @route('/blg/coin_usr_chips_trade_log/', method=['GET', 'POST'])
+@login_require_ajax
 def blg_coin_usr_chips_trade_log():
     p = ParamWarper(request)
     condition = []
@@ -1187,8 +1242,9 @@ def blg_coin_usr_chips_trade_log():
 
 
 
-@login_require
+
 @route('/blg/coin_usr_chips_config/', method=['GET', 'POST'])
+@login_require_ajax
 def blg_coin_usr_chips_config():
     p = ParamWarper(request)
 

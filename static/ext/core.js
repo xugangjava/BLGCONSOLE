@@ -21,6 +21,19 @@ function unmask() { Ext.getBody().unmask(); }
 function isArrary(obj) { return Object.prototype.toString.call(obj) === '[object Array]'; }
 Array.prototype.Clone = function() { return [].concat(this); }
 
+
+Ext.Ajax.on('requestcomplete', function (conn, response, options) {
+    //Ext重新封装了response对象     
+    try{
+        var js=JSON.parse(response.responseText);
+        if(js&&js.SESSSION_TIME_OUT&&js.SESSSION_TIME_OUT===1){
+            alert('您的登录已超时，请刷新页面后登陆');
+        }
+    }catch (e){
+        console.log(e)
+    }
+}, this);     
+
 //crsf验证
 Ext.Ajax.on('beforerequest', function(conn, options) {
     if (!(/^http:.*/.test(options.url) || /^https:.*/.test(options.url))) {

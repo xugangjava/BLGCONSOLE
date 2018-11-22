@@ -71,7 +71,8 @@ Ext.onReady(function () {
                                 {fieldLabel: '昵称', name: 'NICKNAME'},
                                 {fieldLabel: '密码', name: 'PWD'},
                                 {fieldLabel: '筹码额度', name: 'CHIPS'},
-                                {fieldLabel: 'ENABLE', name: 'ENABLE'}
+                                {fieldLabel: 'ENABLE', name: 'ENABLE'},
+                                {fieldLabel: '游戏内ID', name: 'GAME_UID'}
                             ],
                             success: function () {
                                 alert('修改成功!');
@@ -96,7 +97,8 @@ Ext.onReady(function () {
                     { header: '昵称', dataIndex: 'NICKNAME', width: 120 },
                     { header: '当前额度', dataIndex: 'CHIPS', width: 120 },
                     { header: 'ENABLE', dataIndex: 'ENABLE', width: 120 ,renderer: verify_status},
-                    { header: 'PWD', dataIndex: 'PWD', width: 120 ,renderer: pwd}
+                    { header: 'PWD', dataIndex: 'PWD', width: 120 ,renderer: pwd},
+                    { header: '游戏内ID', dataIndex: 'GAME_UID', width: 120},
                 ]
             }
         },
@@ -269,9 +271,9 @@ Ext.onReady(function () {
                         { header: '变更后额度', dataIndex: 'AFTER_CHIPS', width: 120 },
                         { header: '变更额度', dataIndex: 'CHANGE_CHIPS', width: 120 },
                         { header: '变更原因', dataIndex: 'REASON', width: 120 },
-                        { header: '当前额度', dataIndex: 'CCHIPS', width: 120 },
-                        { header: '玩家ID', dataIndex: 'usrId', width: 120 },
-                        { header: '购买筹码', dataIndex: 'chips', width: 120 },
+                        {header: '变更时间', dataIndex: 'DT', width: 120},
+                        { header: '玩家ID', dataIndex: 'usrid', width: 120 },
+                        { header: '当前筹码', dataIndex: 'chips', width: 120 },
                         { header: '玩家用户名', dataIndex: 'phone', width: 120 },
                         { header: '玩家昵称', dataIndex: 'nickname', width: 120 },
                         { header: '充值金额', dataIndex: 'moneyconsume', width: 120 }

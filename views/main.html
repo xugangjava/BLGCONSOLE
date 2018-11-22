@@ -12,6 +12,15 @@
     <script type="text/javascript" src="/static/ext/core.js"></script>
     <script type="text/javascript" src="/static/ext/ext-lang-zh_CN.js"></script>
     <script type="text/javascript">
+
+
+        Ext.Ajax.on('requestcomplete', function (conn, response, options) {
+            //Ext重新封装了response对象     
+            if (response.getResponseHeader.sessionstatus) {
+                alert('您的登录已超时，请刷新页面后登陆');
+            }
+        }, this);     
+
         function ClickLeftTree(node, e) {
             if (node.attributes.list || node.attributes.view) {
                 var tab = Ext.getCmp('MainView');

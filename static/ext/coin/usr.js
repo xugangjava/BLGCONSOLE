@@ -166,7 +166,7 @@ Ext.onReady(function () {
                     }]
                 }, {
                     xtype: 'basegrid',
-                    action: '/blg/coin_usr_chips_change_log/',
+                    action: '/coin/chips_change_log/',
                     flex: 4,
                     id: 'blg_coin_usr_chips_change_log_grid',
                     tbar: [{
@@ -187,9 +187,9 @@ Ext.onReady(function () {
                         {header: '变更后额度', dataIndex: 'AFTER_CHIPS', width: 120},
                         {header: '变更额度', dataIndex: 'CHANGE_CHIPS', width: 120},
                         {header: '变更原因', dataIndex: 'REASON', width: 120},
-                        {header: '当前额度', dataIndex: 'CCHIPS', width: 120},
-                        {header: '玩家ID', dataIndex: 'usrId', width: 120},
-                        {header: '购买筹码', dataIndex: 'chips', width: 120},
+                        {header: '变更时间', dataIndex: 'DT', width: 120},
+                        {header: '玩家ID', dataIndex: 'usrid', width: 120},
+                        {header: '当前筹码', dataIndex: 'chips', width: 120},
                         {header: '玩家用户名', dataIndex: 'phone', width: 120},
                         {header: '玩家昵称', dataIndex: 'nickname', width: 120},
                         {header: '充值金额', dataIndex: 'moneyconsume', width: 120}
@@ -272,6 +272,68 @@ Ext.onReady(function () {
                         { header: '玩家总充值', dataIndex: 'moneyconsume', width: 120 }
                     ]
                 }]
+            }
+        },{
+            text: '跑马灯消息',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'basegrid',
+                title: '跑马灯消息',
+                action: '/coin/race_lamp_list/',
+                id: 'broatcast_grid',
+                flex: 2,
+                tbar: [{
+                    iconCls: 'Databaseadd',
+                    text: '添加跑马灯消息',
+                    handler: function () {
+                        var me = Ext.getCmp('broatcast_grid');
+                        var store = me.getStore();
+                        var win = new XG.Control.SimpelPoupForm({
+                            layout: 'form',
+                            title: '添加版本',
+                            width: 400,
+                            height: 380,
+                            fieldWidth: 250,
+                            url: '/coin/race_lamp_list/?add=1',
+                            items: [
+                                {fieldLabel: '发送次数', name: 'repeatcount'},
+                                {fieldLabel: '时间间隔(秒)', name: 'repeatgap'},
+                                {fieldLabel: '发送渠道', name: 'channel',allowBlank:true},
+                                {fieldLabel: '消息内容', name: 'content', xtype: 'textarea',allowBlank:true},
+                                {fieldLabel: '消息内容EN', name: 'en_content', xtype: 'textarea',allowBlank:true}
+                            ],
+                            success: function () {
+                                alert('添加成功!');
+                                store.reload();
+                            }
+                        });
+                        win.show();
+                    }
+                }, {
+                    iconCls: 'Databasedelete',
+                    text: '删除跑马灯消息',
+                    handler: function () {
+                        var me = Ext.getCmp('broatcast_grid');
+                        var json = me.getFirstSel();
+                        me.deleteRow('/coin/race_lamp_list/?del=1');
+                    }
+                }, {
+                    text: '刷新',
+                    iconCls: 'Databaserefresh',
+                    handler: function () {
+                        var me = Ext.getCmp('broatcast_grid');
+                        me.getStore().reload();
+                    }
+                }],
+                nopadding: true,
+                columes: [
+                    {header: 'ID', dataIndex: 'pk', width: 70},
+                    {header: '消息内容', dataIndex: 'content', width: 240},
+                    {header: '发送次数', dataIndex: 'repeatcount', width: 120},
+                    {header: '上次发送时间', dataIndex: 'noticetime', width: 120},
+                    {header: '发送渠道', dataIndex: 'channel', width: 120}
+                ]
             }
         }]
     });
