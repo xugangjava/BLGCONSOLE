@@ -1152,12 +1152,12 @@ def my_card_report():
 
     if MyCardTradeNo:
         with DB() as db:
-            r = db.sql_dict("select MyCardString from my_card_report where MyCardTradeNo='%s' and MyCardTradeNo not LIKE '%%GST';"
+            r = db.sql_dict("select MyCardString from my_card_report where MyCardTradeNo='%s' ;"
                             , MyCardTradeNo)
             return r.get("MyCardString", '') if r else ""
     else:
         with DB() as db:
-            rs = db.sql_dict_array("select MyCardString from my_card_report where TIM>'%s' and TIM<'%s' and MyCardTradeNo not LIKE '%%GST';"
+            rs = db.sql_dict_array("select MyCardString from my_card_report where TIM>'%s' and TIM<'%s';"
                                    , StartDateTime, EndDateTime)
         rs = '<BR>'.join([r['MyCardString'] for r in rs])
         return rs
