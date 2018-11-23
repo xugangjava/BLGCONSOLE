@@ -1159,5 +1159,5 @@ def my_card_report():
         with DB() as db:
             rs = db.sql_dict_array("select MyCardString from my_card_report where TIM>'%s' and TIM<'%s' and MyCardTradeNo not LIKE '%%GST';"
                                    , StartDateTime, EndDateTime)
-        rs = '<br/>'.join([r['MyCardString'] for r in rs])
+        rs = '<BR>'.join([r['MyCardString'] for r in rs])
         return rs
