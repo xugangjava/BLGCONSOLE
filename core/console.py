@@ -1002,7 +1002,7 @@ def user_ranking_log_list():
             start=p.int__start,
             limit=p.int__limit,
             tbName="ranking3_log p left join usr u on p.UID=u.usrid",
-            columNames="p.*,u.*,p.DT+p.UID pk",
+            columNames="p.*,u.*,p.DT+p.RANK+p.UID pk",
             orderBy=" DT DESC,RANK ASC",
         )
 
