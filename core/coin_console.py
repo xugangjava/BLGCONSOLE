@@ -71,6 +71,8 @@ def coin_player_list():
     p = ParamWarper(request)
     def add_chips():
         with DB() as db:
+            if int(p.__CHIPS)<0:
+                return Fail("筹码必须为正整数")
             uid=p.__pk
             usr=db.sql_dict("select versionid,regdevice,version from usr where usrid=%d;",uid)
             payconfig=db.sql_dict("select CHIPS,RMB from coin_usr_chips_config where ID=%d;",p.__payid)
