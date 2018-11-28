@@ -102,7 +102,7 @@ def coin_player_list():
 
     def chips_point_combo():
         with DB() as db:
-            return db.sql_combo("select ID pk, NT name from coin_usr_chips_config ORDER  BY NT;")
+            return db.sql_combo("select ID pk, NT name from coin_usr_chips_config ORDER  BY NT ASC;")
 
     if p.__add_chips:return add_chips()
     if p.__combo:return chips_point_combo()

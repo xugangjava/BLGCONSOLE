@@ -257,6 +257,59 @@ Ext.onReady(function () {
                     {header: '发送渠道', dataIndex: 'channel', width: 120}
                 ]
             }
+        },{
+            text: '系统信息',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'basegrid',
+                title: '系统信息',
+                action: '/blg/game_watch/',
+                id: 'game_watch_grid',
+                flex: 2,
+                tbar: [{
+                    iconCls: 'Databaseadd',
+                    text: '添加重启时间',
+                    handler: function () {
+                        var me = Ext.getCmp('game_watch_grid');
+                        var store = me.getStore();
+                        var json = me.getFirstSel();
+                        if (!json) return;
+                        var win = new XG.Control.SimpelPoupForm({
+                            layout: 'form',
+                            title: '添加重启时间',
+                            width: 400,
+                            height: 380,
+                            fieldWidth: 250,
+                            url: '/blg/game_watch/?edit=1',
+                            items: [
+                                {fieldLabel: '游戏编号', name: 'GAME_NAME',readOnly:true},
+                                {fieldLabel: '定时重启时间', name: 'RESTART_TIME',xtype:'datetimefield'}
+                            ],
+                            success: function () {
+                                alert('添加成功!');
+                                store.reload();
+                            }
+                        });
+                        win.fill(json);
+                        win.show();
+                    }
+                }, {
+                    text: '刷新',
+                    iconCls: 'Databaserefresh',
+                    handler: function () {
+                        var me = Ext.getCmp(broatcast_grid);
+                        me.getStore().reload();
+                    }
+                }],
+                nopadding: true,
+                columes: [
+                    {header: '游戏编号', dataIndex: 'GAME_NAME', width: 70},
+                    {header: '在线人数', dataIndex: 'ONLINE_COUNT', width: 240},
+                    {header: '响应时间', dataIndex: 'PING_TIME', width: 120},
+                    {header: '重启时间', dataIndex: 'RESTART_TIME', width: 120}
+                ]
+            }
         }]
     });
     main_left_tree.doLayout();

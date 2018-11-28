@@ -1281,3 +1281,19 @@ def blg_coin_usr_chips_config():
     with DB() as db:
         return db.sql_no_padding("select * from coin_usr_chips_config")
 #######################################################
+
+@route('/blg/game_watch/', method=['GET', 'POST'])
+@login_require_ajax
+def game_watch():
+    p=ParamWarper(request)
+    def edit():
+        with DB() as db:
+            db.sql_exec("update game_watch set RESTART_TIME='%s' where GAME_NAME='%s';"
+                        ,p.__RESTART_TIME,p.__GAME_NAME)
+            db.commit()
+            return SUCCESS
+
+    if p.__edit:return edit()
+    with DB() as db:
+        return db.sql_no_padding("select * from game_watch")
+
