@@ -729,6 +729,7 @@ def pay_order_list():
         c.append("p.tim < ''%s''" % p.__end_time)
     if p.__nopay == 'true' or not p.__nopay:
         c.append('p.verify=1')
+    c.append("p.paychannelname!=''COIN''")
     condition = ' AND '.join(c)
     with DB() as db:
         return db.sql_padding(
@@ -770,6 +771,64 @@ def pay_order_list():
             orderBy='  p.tim DESC '
         )
 
+@route('/blg/pay_coin_order_list/', method=['GET', 'POST'])
+@login_require_ajax
+def pay_coin_order_list():
+    p = ParamWarper(request)
+    c = []
+    if p.__uid:
+        c.append("u.usrId=%d" % p.int__uid)
+    if p.__name:
+        c.append("u.nickname like ''%%%s%%''" % p.__name)
+    if p.__nick:
+        c.append("u.nickname like ''%%%s%%''" % p.__nick)
+    if p.__start_time:
+        c.append("p.tim > ''%s''" % p.__start_time)
+    if p.__end_time:
+        c.append("p.tim < ''%s''" % p.__end_time)
+    if p.__nopay == 'true' or not p.__nopay:
+        c.append('p.verify=1')
+    c.append("p.paychannelname=''COIN''")
+    condition = ' AND '.join(c)
+    with DB() as db:
+        return db.sql_padding(
+            start=p.int__start,
+            limit=p.int__limit,
+            tbName="""
+                pay p INNER JOIN usr u ON p.usrId = u.usrid
+            """,
+            columNames="""
+                 p.id
+                ,p.usrId
+                ,p.payNum
+                ,p.ibeiId
+                ,p.itemId
+                ,p.itemType
+                ,p.dollar
+                ,p.realdollar
+                ,p.chips
+                ,p.recommend
+                ,p.tim
+                ,p.verify
+                ,p.paychannel
+                ,p.orderid
+                ,p.versionid
+                ,p.platfrom
+                ,p.versionname
+                ,p.paychannelname
+                ,u.usrid
+                ,u.nickname
+                ,u.level
+                ,u.moneyconsume
+                ,u.regip
+                ,u.regtime
+                ,u.regdevice
+                ,u.phone
+                ,u.lastLogintm
+            """,
+            condition=condition,
+            orderBy='  p.tim DESC '
+        )
 
 #######################################################
 @route('/blg/combo_channel/', method=['GET', 'POST'])

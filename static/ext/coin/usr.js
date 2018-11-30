@@ -5,6 +5,10 @@ Ext.onReady(function () {
         return value ? '支付成功' : '支付失败';
     }
 
+    function pwd() {
+        return "*********";
+    }
+
     var nopay=true;
     main_left_tree.getRootNode().appendChild({
         text: '币商管理平台',
@@ -37,33 +41,8 @@ Ext.onReady(function () {
                         {fieldLabel: '用户名', name: 'UserName'},
                         {fieldLabel: '昵称', name: 'NickName'}
                     ],
-                    buttons: [{
-                        text: '重置查询条件',
-                        handler: function () {
-                            var form = Ext.getCmp('user_search_form').getForm();
-                            form.reset();
-                        }
-                    },
+                    buttons: [
                         {
-                            text: '查询',
-                            handler: function () {
-                                var form = Ext.getCmp('user_search_form');
-                                var obj = form.getForm().getValues();
-                                var grid = Ext.getCmp('user_grid');
-                                grid.search(obj);
-                            }
-                        }
-                    ]
-                },
-                    {
-                        xtype: 'basegrid',
-                        action: '/coin/player_list/',
-                        FW: 600,
-                        FH: 425,
-                        flex: 4,
-                        id: 'user_grid',
-                        tbar: [{
-                            iconCls: 'Emailattach',
                             text: '添加筹码',
                             handler: function () {
                                 var me = Ext.getCmp('user_grid');
@@ -73,7 +52,7 @@ Ext.onReady(function () {
                                 var store = me.getStore();
                                 var win = new XG.Control.SimpelPoupForm({
                                     layout: 'form',
-                                    title: '发送邮件',
+                                    title: '添加筹码',
                                     width: 400,
                                     height: 380,
                                     fieldWidth: 250,
@@ -88,7 +67,7 @@ Ext.onReady(function () {
                                             url: '/coin/player_list/?combo=1'
                                         },
                                         {fieldLabel: 'CHIPS', name: 'CHIPS'},
-                                        {fieldLabel: '备注', name: 'REMARK',xtype:"textarea",maxLength:30}
+                                        {fieldLabel: '备注', name: 'REMARK', xtype: "textarea", maxLength: 30}
                                     ],
                                     success: function () {
                                         alert('筹码发放成功!');
@@ -98,15 +77,47 @@ Ext.onReady(function () {
                                 win.fill(json);
                                 win.show();
                             }
-                        }, {
+                        },
+                        {
                             text: '用户详细信息',
-                            iconCls: 'User',
                             handler: function () {
                                 var grid = Ext.getCmp('user_grid');
                                 var json = grid.getFirstSel();
                                 UINFO(json.pk);
                             }
-                        }],
+                        },
+                        {
+                            text: '重置查询条件',
+                            handler: function () {
+                                var form = Ext.getCmp('user_search_form').getForm();
+                                form.reset();
+                            }
+                        },
+                        {
+                            text: '查询',
+                            handler: function () {
+                                var form = Ext.getCmp('user_search_form');
+                                var obj = form.getForm().getValues();
+                                var grid = Ext.getCmp('user_grid');
+                                grid.search(obj);
+                            }
+                        }
+                    ]
+                }, {
+                        xtype: 'basegrid',
+                        action: '/coin/player_list/',
+                        FW: 600,
+                        FH: 425,
+                        flex: 4,
+                        id: 'user_grid',
+                        notbar:true,
+                        tbar: [{
+                            iconCls: 'Emailattach',
+                            text: '添加筹码',
+                            handler: function () {
+
+                            }
+                        }, ],
                         columes: [
                             {header: '用户ID', dataIndex: 'pk', width: 120},
                             {header: '用户名', dataIndex: 'phone', width: 120},
@@ -114,18 +125,7 @@ Ext.onReady(function () {
                             {header: '金钱', dataIndex: 'chips', width: 120},
                             {header: '积分', dataIndex: 'lotto', width: 100},
                             {header: '充值金额', dataIndex: 'moneyconsume', width: 100},
-                            {header: '筹码余额', dataIndex: 'chipslimit', width: 100},
-                            {header: '当前版本', dataIndex: 'version', width: 100},
-                            {header: '注册版本', dataIndex: 'regversion', width: 100},
-                            {header: '是否禁用', dataIndex: 'disable', width: 100},
-                            {header: '上次登录时间', dataIndex: 'lastLogintm'},
-                            {header: 'LEVEL', dataIndex: 'level'},
-                            {header: 'EXP', dataIndex: 'exp'},
-                            {header: '运气值', dataIndex: 'luck'},
-                            {header: '注册IP', dataIndex: 'regip'},
-                            {header: '注册时间', dataIndex: 'regtime'},
-                            {header: '注册渠道', dataIndex: 'versionid'},
-                            {header: '注册设备', dataIndex: 'regdevice'},
+                            {header: '当前版本', dataIndex: 'version', width: 100}
                         ]
                     }
                 ]
@@ -335,7 +335,96 @@ Ext.onReady(function () {
                     {header: '发送渠道', dataIndex: 'channel', width: 120}
                 ]
             }
-        }]
+        }, {
+            text: '分销商管理',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'basegrid',
+                action: '/blg/coin_usr_list/',
+                flex: 4,
+                id: 'coin_usr_grid',
+                nopadding:true,
+                tbar: [{
+                    text: '添加分销商',
+                    iconCls: 'User',
+                    handler: function () {
+                        var me = Ext.getCmp('coin_usr_grid');
+                        var store = me.getStore();
+                        var win = new XG.Control.SimpelPoupForm({
+                            layout: 'form',
+                            title: '添加分销商',
+                            width: 400,
+                            height: 380,
+                            fieldWidth: 250,
+                            url: '/blg/coin_usr_list/?add=1',
+                            items: [
+                                {fieldLabel: '用户名', name: 'USRNAME'},
+                                {fieldLabel: '昵称', name: 'NICKNAME'},
+                                {fieldLabel: '密码', name: 'PWD'},
+                                {fieldLabel: '筹码额度', name: 'CHIPS'}
+                            ],
+                            success: function () {
+                                alert('添加成功!');
+                                store.reload();
+                            }
+                        });
+                        win.show();
+                    }
+                },{
+                    text: '修改分销商',
+                    iconCls: 'Databaseedit',
+                    handler: function () {
+                        var me = Ext.getCmp('coin_usr_grid');
+                        var store = me.getStore();
+                        var json = me.getFirstSel();
+                        if (!json) return;
+
+                        var win = new XG.Control.SimpelPoupForm({
+                            layout: 'form',
+                            title: '修改分销商',
+                            width: 400,
+                            height: 380,
+                            fieldWidth: 250,
+                            url: '/blg/coin_usr_list/?edit=1',
+                            items: [
+                                {fieldLabel: 'ID', name: 'ID',readOnly:true},
+                                {fieldLabel: '用户名', name: 'USRNAME',readOnly:true},
+                                {fieldLabel: '昵称', name: 'NICKNAME'},
+                                {fieldLabel: '密码', name: 'PWD'},
+                                {fieldLabel: '筹码额度', name: 'CHIPS'},
+                                {fieldLabel: 'ENABLE', name: 'ENABLE'},
+                                {fieldLabel: '游戏内ID', name: 'GAME_UID'}
+                            ],
+                            success: function () {
+                                alert('修改成功!');
+                                store.reload();
+                            }
+                        });
+                        win.fill(json);
+                        win.show();
+                    }
+                },{
+                    text: '刷新',
+                    iconCls: 'Databaserefresh',
+                    handler: function () {
+                        var me = Ext.getCmp('coin_usr_grid');
+                        var store = me.getStore();
+                        store.reload();
+                    }
+                }],
+                columes: [
+                    { header: 'ID', dataIndex: 'ID', width: 120 },
+                    { header: '用户名', dataIndex: 'USRNAME', width: 120 },
+                    { header: '昵称', dataIndex: 'NICKNAME', width: 120 },
+                    { header: '当前额度', dataIndex: 'CHIPS', width: 120 },
+                    { header: 'ENABLE', dataIndex: 'ENABLE', width: 120 ,renderer: verify_status},
+                    { header: 'PWD', dataIndex: 'PWD', width: 120 ,renderer: pwd},
+                    { header: '游戏内ID', dataIndex: 'GAME_UID', width: 120},
+                ]
+            }
+        }
+        ]
     });
     main_left_tree.doLayout();
 
