@@ -298,16 +298,16 @@ Ext.onReady(function () {
                     text: '刷新',
                     iconCls: 'Databaserefresh',
                     handler: function () {
-                        var me = Ext.getCmp(broatcast_grid);
+                        var me = Ext.getCmp('game_watch_grid');
                         me.getStore().reload();
                     }
                 }],
                 nopadding: true,
                 columes: [
-                    {header: '游戏编号', dataIndex: 'GAME_NAME', width: 70},
+                    {header: '游戏编号', dataIndex: 'GAME_NAME', width: 240},
                     {header: '在线人数', dataIndex: 'ONLINE_COUNT', width: 240},
-                    {header: '响应时间', dataIndex: 'PING_TIME', width: 120},
-                    {header: '重启时间', dataIndex: 'RESTART_TIME', width: 120}
+                    {header: '响应时间', dataIndex: 'PING_TIME', width: 240},
+                    {header: '重启时间', dataIndex: 'RESTART_TIME', width: 240}
                 ]
             }
         }]

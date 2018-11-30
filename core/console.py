@@ -187,6 +187,7 @@ def user_list():
                 `usr`.`luck`,
                 `usr`.`exp`,
                 `usr`.`chipslimit`,
+                `usr`.`chipslow`,
                 `usr`.`disable`,
                 `usr`.`level`,
                 `usr`.`test`
