@@ -61,6 +61,13 @@
 
         }
 
+        function  RefreshTimeOut() {
+            POST("/coin/query_chips_limit/",null,function (json) {
+                document.getElementById("chips").innerHTML="当前筹码额度:"+json.chips;
+                setTimeout(RefreshTimeOut,60000);
+            });
+        }
+
         Ext.ns('Main');
         Ext.onReady(function() {
             Main.ClearTab = function() {
@@ -78,7 +85,7 @@
                 enableTabScroll: true,
                 region: 'center'
             });
-
+            RefreshTimeOut();
             Main.Viewport = new Ext.Viewport({
                 layout: {
                     type: 'border',
@@ -91,14 +98,14 @@
                         id: "head_panel",
                         region: "north",
                         xtype: 'panel',
-                        height: 80,
+                        height: 120,
                         layout: 'fit',
                         split: false,
                         border: false,
                         items: [{
                             xtype: 'panel',
                             border: false,
-                            html: '<div><h6>百乐宫币商管理后台</h6><br><a href="/coin/console_login_out/" style="float:right;">注销</a></div>'
+                            html: '<div><h6>百乐宫币商管理后台</h6><br><div id="chips" onclick="RefreshTimeOut()">当前筹码额度:0</div><a href="/coin/console_login_out/" style="float:right;">退出登录</a></div>'
                         }]
                     }, {
                         xtype: 'panel',
@@ -154,7 +161,9 @@
         });
     </script>
     <script type="text/javascript" src="/static/ext/coin/usr.js"></script>
-
+    % if parent==0:
+    <script type="text/javascript" src="/static/ext/coin/coin_usr.js"></script>
+    % end
 </head>
 
 </html>

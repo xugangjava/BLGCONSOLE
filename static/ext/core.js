@@ -712,7 +712,7 @@ function POST(url, json, success, fail) {
         method: "post",
         params: json,
         success: function(form) {
-            var action = form.responseJSON;
+            var action = JSON.parse(form.responseText);
             if (success) {
                 success(action);
                 return;

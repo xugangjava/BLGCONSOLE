@@ -99,6 +99,7 @@ Ext.onReady(function () {
                     { header: 'ENABLE', dataIndex: 'ENABLE', width: 120 ,renderer: verify_status},
                     { header: 'PWD', dataIndex: 'PWD', width: 120 ,renderer: pwd},
                     { header: '游戏内ID', dataIndex: 'GAME_UID', width: 120},
+                    { header: '上级币商ID', dataIndex: 'PARENT', width: 120},
                 ]
             }
         },

@@ -13,6 +13,7 @@ Ext.onReady(function () {
     main_left_tree.getRootNode().appendChild({
         text: '币商管理平台',
         iconCls: 'Bulletright',
+        id:"root2",
         expanded: true,
         children: [{
             text: '玩家列表',
@@ -39,12 +40,13 @@ Ext.onReady(function () {
                     items: [
                         {fieldLabel: '用户ID', name: 'UserID', xtype: 'numberfield'},
                         {fieldLabel: '用户名', name: 'UserName'},
-                        {fieldLabel: '昵称', name: 'NickName'}
+                        {fieldLabel: '昵称', name: 'NickName'},
                     ],
                     buttons: [
                         {
                             text: '添加筹码',
                             handler: function () {
+                                RefreshTimeOut();
                                 var me = Ext.getCmp('user_grid');
                                 var json = me.getFirstSel();
                                 if (!json) return;
@@ -96,6 +98,7 @@ Ext.onReady(function () {
                         {
                             text: '查询',
                             handler: function () {
+                                RefreshTimeOut();
                                 var form = Ext.getCmp('user_search_form');
                                 var obj = form.getForm().getValues();
                                 var grid = Ext.getCmp('user_grid');
@@ -111,13 +114,6 @@ Ext.onReady(function () {
                         flex: 4,
                         id: 'user_grid',
                         notbar:true,
-                        tbar: [{
-                            iconCls: 'Emailattach',
-                            text: '添加筹码',
-                            handler: function () {
-
-                            }
-                        }, ],
                         columes: [
                             {header: '用户ID', dataIndex: 'pk', width: 120},
                             {header: '用户名', dataIndex: 'phone', width: 120},
@@ -210,7 +206,7 @@ Ext.onReady(function () {
                 },
                 items: [{
                     xtype: 'form',
-                    flex: 2,
+                    flex: 4,
                     padding: 10,
                     id: 'coin_pay_order_search_from',
                     items: [
@@ -334,6 +330,58 @@ Ext.onReady(function () {
                     {header: '上次发送时间', dataIndex: 'noticetime', width: 120},
                     {header: '发送渠道', dataIndex: 'channel', width: 120}
                 ]
+            }
+        }, {
+            text: '密码修改',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'panel',
+                width:600,
+                layout: {
+                    type: 'vbox',
+                    padding: '1',
+                    align: 'stretch',
+                    html: ''
+                },
+                items: [{
+                    xtype: 'form',
+                    id:"editpwdform",
+                    items: [
+                        {fieldLabel: '当前密码', xtype: 'textfield', name: 'curpwd', inputType: 'password'},
+                        {fieldLabel: '新密码', xtype: 'textfield', name: 'newpwd', inputType: 'password'},
+                        {fieldLabel: '确认新密码', xtype: 'textfield', name: 'cnewpwd', inputType: 'password'}
+                    ],
+                    buttons: [{
+                        iconCls: 'Databaseedit',
+                        text: '修改密码',
+                        handler: function () {
+                            var form = Ext.getCmp('editpwdform');
+                            var json = form.getForm().getValues();
+                            if(!json.newpwd||!json.cnewpwd||!json.curpwd){
+                                alert("密码不能为空");
+                                return;
+                            }
+                            if(json.newpwd!=json.cnewpwd){
+                                alert("新密码确认不一致");
+                                return;
+                            }
+                            if(!json.newpwd||json.newpwd.length<6||
+                                !json.cnewpwd||json.cnewpwd.length<6){
+                                alert("密码长度必须6位或以上");
+                                return;
+                            }
+                            POST( '/coin/edit_password/',json,function (json) {
+                                if(json.success){
+                                    alert("密码修改成功");
+                                }else{
+                                    alert(json.message);
+                                }
+                                form.reset();
+                            });
+                        }
+                    }]
+                }]
             }
         }
         ]

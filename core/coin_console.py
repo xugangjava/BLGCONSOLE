@@ -9,14 +9,21 @@ TEMPLATE_PATH.append(os.path.join(BASE_DIR, 'views'))
 from bottle import static_file
 
 def UPDATE_COIN_USR_MONGY(db,cid,chips,reason,uid):
-    r=db.sql_dict("select CHIPS from coin_usr where ID=%d;",cid)
+    r=db.sql_dict("select CHIPS,PARENT from coin_usr where ID=%d;",cid)
+    parent=r['PARENT']
+    if parent:
+        #上级额度
+        r = db.sql_dict("select CHIPS from coin_usr where ID=%d;", parent)
     before_chips=r['CHIPS']
     after_chips=before_chips+chips
     if after_chips<0:return False
     db.sql_exec("""
     INSERT INTO poker.coin_usr_chips_log( CID, BEFORE_CHIPS, AFTER_CHIPS, CHANGE_CHIPS, REASON,UID) 
     VALUES (%d, %d, %d, %d, '%s',%d);""",cid,before_chips,after_chips,chips,reason,uid)
-    db.sql_exec("update coin_usr set CHIPS=CHIPS+%d where ID=%d;",chips,cid)
+    if parent:
+        db.sql_exec("update coin_usr set CHIPS=CHIPS+%d where ID=%d;", chips, parent)
+    else:
+        db.sql_exec("update coin_usr set CHIPS=CHIPS+%d where ID=%d;",chips,cid)
     return True
 
 def coin_login_require(func):
@@ -46,7 +53,7 @@ def coin_console_login():
         if str(code).lower() != str(p.session.get('code')).lower():
             return Fail("验证码错误")
         with DB() as db:
-            r = db.sql_dict("select id from coin_usr where USRNAME='%s' and PWD='%s'", username, password)
+            r = db.sql_dict("select id from coin_usr where USRNAME='%s' and PWD='%s' and ENABLE=1;", username, password)
             if not r: return Fail("用户名或密码错误")
         p.session['cuid'] = r['id']
         return SUCCESS
@@ -55,10 +62,17 @@ def coin_console_login():
     return template("coin_login.html")
 
 
-@route('/coin/console_main/',method=['GET', 'POST'])
+@route('/coin/console_main/', method=['GET', 'POST'])
 @coin_login_require
 def coin_console_main():
-    return template("coin_main.html")
+    p=ParamWarper(request)
+    with DB() as db:
+        r = db.sql_dict("select CHIPS,NICKNAME,PARENT from coin_usr where ID=%d;", p.session_cuid)
+        if r['PARENT']:
+            chips = db.sql_dict("select CHIPS from coin_usr where ID=%d;", p.session_cuid)['CHIPS']
+        else:
+            chips = r['CHIPS']
+    return template("coin_main.html", chips=chips, nickname=r['NICKNAME'],parent=1 if r['PARENT'] else 0)
 
 
 
@@ -182,7 +196,7 @@ def coin_chips_change_log():
         c.append("l.DT > ''%s''" % p.__start_time)
     if p.__end_time:
         c.append("l.DT < ''%s''" % p.__end_time)
-    c.append("l.CID=%d" % p.session_cuid)
+    c.append("(l.CID=%d or c.PARENT=%d)" % (p.session_cuid,p.session_cuid))
     with DB() as db:
         return db.sql_padding(
             start=p.int__start,
@@ -243,14 +257,14 @@ def coin_pay_order_list():
         c.append("p.tim < ''%s''" % p.__end_time)
     if p.__nopay == 'true' or not p.__nopay:
         c.append('p.verify=1')
-    c.append("p.cid="+str(p.session_cuid))
+    c.append("(p.cid="+str(p.session_cuid) +" or c.PARENT="+str(p.session_cuid)+")")
     condition = ' AND '.join(c)
     with DB() as db:
         return db.sql_padding(
             start=p.int__start,
             limit=p.int__limit,
             tbName="""
-                pay p INNER JOIN usr u ON p.usrId = u.usrid
+                pay p INNER JOIN usr u ON p.usrId = u.usrid LEFT JOIN coin_usr c ON p.cid=c.ID
             """,
             columNames="""
                  p.id
@@ -334,4 +348,74 @@ def coin_race_lamp_list():
         return db.sql_no_padding("""
             SELECT id pk, gm_coin_notice.* FROM gm_coin_notice
         """)
+
+
+@route('/coin/coin_usr_list/', method=['GET', 'POST'])
+@coin_login_require_ajax
+def coin_coin_usr_list():
+    p=ParamWarper(request)
+    with DB() as db:
+        r=db.sql_dict("select PARENT from coin_usr where ID=%d;",p.session_cuid)
+        if r['PARENT']:return Fail("只有0级分销商可以添加下层")
+
+    def add_coin_usr():
+        USRNAME,NICKNAME,PWD=p.__USRNAME,p.__NICKNAME,p.__PWD
+        with DB() as db:
+            if db.sql_exists("select 1 from coin_usr where USRNAME='%s';",USRNAME):
+                return Fail("用户名已存在")
+            db.sql_exec("""
+                INSERT INTO poker.coin_usr
+                (USRNAME, CHIPS, PWD, NICKNAME, ENABLE,PARENT) 
+                VALUES ('%s', %d, '%s', '%s', 1,%d);
+            """,USRNAME,0,PWD,NICKNAME,p.session_cuid)
+            db.commit()
+            return SUCCESS
+
+    def edit_coin_usr():
+        ID, USRNAME, NICKNAME,  PWD,ENABLE ,GAME_UID=\
+            p.__ID, p.__USRNAME, p.__NICKNAME,  p.__PWD,p.__ENABLE,p.__GAME_UID
+        with DB() as db:
+            if db.sql_exists("select 1 from coin_usr where USRNAME='%s' AND ID!=%d;",USRNAME,ID):
+                return Fail("用户名已存在")
+            db.sql_exec("""
+                UPDATE poker.coin_usr 
+                SET USRNAME = '%s', PWD = '%s', NICKNAME = '%s',ENABLE=%d,GAME_UID=%d
+                WHERE ID=%d AND PARENT=%d; """,USRNAME,PWD,NICKNAME,ENABLE,GAME_UID,ID,p.session_cuid)
+            db.commit()
+            return SUCCESS
+
+    if p.__add:return add_coin_usr()
+    if p.__edit:return edit_coin_usr()
+    with DB() as db:
+        return db.sql_no_padding("select ID pk, coin_usr.* from coin_usr WHERE  PARENT=%d;",p.session_cuid)
+
+@route('/coin/query_chips_limit/', method=['GET', 'POST'])
+@coin_login_require_ajax
+def coin_query_chips_limit():
+    p = ParamWarper(request)
+    with DB() as db:
+        r = db.sql_dict("select CHIPS,PARENT from coin_usr where ID=%d;", p.session_cuid)
+        parent = r['PARENT']
+        if parent:
+            # 上级额度
+            r = db.sql_dict("select CHIPS from coin_usr where ID=%d;", parent)
+    return Success("",chips=r['CHIPS'])
+
+
+@route('/coin/edit_password/', method=['GET', 'POST'])
+@coin_login_require_ajax
+def coin_edit_password():
+    p = ParamWarper(request)
+    curpwd,newpwd,cnewpwd=str(p.str__curpwd),str(p.str__newpwd),str(p.str__cnewpwd)
+    if newpwd!=cnewpwd:
+        return Fail("密码确认不一致")
+    if len(newpwd)<6:
+        return Fail("新密码长度必须大于等于6")
+    with DB() as db:
+        r=db.sql_dict("select PWD from coin_usr where ID=%d;",p.session_cuid)
+        if r['PWD']!=curpwd:
+            return Fail("旧密码输入错误，请联上级系管理员找回密码")
+        db.sql_exec("update coin_usr set pwd='%s' where id=%d;",newpwd, p.session_cuid)
+        db.commit()
+    return SUCCESS
 
