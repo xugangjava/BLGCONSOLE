@@ -102,6 +102,44 @@ Ext.onReady(function () {
                                 win.fill(json);
                                 win.show();
                             }
+                        },{
+                            iconCls: 'Databaseedit',
+                            text: '修改',
+                            handler: function () {
+                                var me = Ext.getCmp(user_grid);
+                                var json = me.getFirstSel();
+                                if (!json) return;
+                                var pk = json.pk;
+                                var store = me.getStore();
+                                var win = new XG.Control.SimpelPoupForm({
+                                    layout: 'form',
+                                    title: '修改运气',
+                                    width: 400,
+                                    height: 400,
+                                    fieldWidth: 250,
+                                    url: '/blg/do_edit_user_info/?update_luck=1',
+                                    items: [
+                                        {fieldLabel: '用户ID', name: 'pk', readOnly: true},
+                                        {fieldLabel: '用户名', name: 'phone', readOnly: true, allowBlank: true},
+                                        {fieldLabel: '昵称', name: 'nickname',readOnly: true},
+                                        {fieldLabel: '金钱', name: 'chips',readOnly: true},
+                                        {fieldLabel: '积分', name: 'lotto',readOnly: true},
+                                        {fieldLabel: '运气值', name: 'luck'},
+                                        {fieldLabel: '等级', name: 'level',readOnly: true},
+                                        {fieldLabel: '经验', name: 'exp',readOnly: true},
+                                        {fieldLabel: '渠道', name: 'versionid',readOnly: true},
+                                        {fieldLabel: '充值金额', name: 'moneyconsume',readOnly: true},
+                                        {fieldLabel: 'DISABLE', name: 'disable',readOnly: true},
+                                        {fieldLabel: 'TEST', name: 'test',readOnly: true}
+                                    ],
+                                    success: function () {
+                                        alert('修改成功!');
+                                        store.reload();
+                                    }
+                                });
+                                win.fill(json);
+                                win.show();
+                            }
                         }, {
                             iconCls: 'Databasedelete',
                             text: '删除测试账号',

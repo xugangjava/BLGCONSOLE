@@ -203,15 +203,18 @@ def user_list():
 def do_edit_user_info():
     p = ParamWarper(request)
     with DB() as db:
-        db.sql_exec("""
-            update usr 
-            set chips=%d,lotto=%d,luck=%d,level=%d,exp=%d ,versionid='%s',disable=%d ,moneyconsume=%d,nickname='%s',test=%d
-            where usrid=%d
-        """, p.int__chips,
-                    p.int__lotto,
-                    p.int__luck,
-                    p.int__level,
-                    p.int__exp, p.__versionid, p.int__disable,p.__moneyconsume,p.__nickname, p.__test, p.int__pk)
+        if p.__update_luck:
+            db.sql_exec("update usr  set luck=%d where usrid=%d;",p.int__luck,p.int__pk)
+        else:
+            db.sql_exec("""
+                update usr 
+                set chips=%d,lotto=%d,luck=%d,level=%d,exp=%d ,versionid='%s',disable=%d ,moneyconsume=%d,nickname='%s',test=%d
+                where usrid=%d
+            """, p.int__chips,
+                        p.int__lotto,
+                        p.int__luck,
+                        p.int__level,
+                        p.int__exp, p.__versionid, p.int__disable,p.__moneyconsume,p.__nickname, p.__test, p.int__pk)
         db.commit()
     return SUCCESS
 
