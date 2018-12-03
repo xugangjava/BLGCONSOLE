@@ -104,7 +104,7 @@ Ext.onReady(function () {
                             }
                         },{
                             iconCls: 'Databaseedit',
-                            text: '修改',
+                            text: '修改运气',
                             handler: function () {
                                 var me = Ext.getCmp(user_grid);
                                 var json = me.getFirstSel();
