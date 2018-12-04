@@ -1070,7 +1070,7 @@ def user_ranking_log_list():
         )
     idx=0
     for r in rs['items']:
-        r['items']['pk']=idx
+        r['pk']=idx
         idx+=1
     return rs
 #######################################################
