@@ -1061,14 +1061,18 @@ def user_lotto_log_list():
 def user_ranking_log_list():
     p = ParamWarper(request)
     with DB() as db:
-        return db.sql_padding(
+        rs= db.sql_padding(
             start=p.int__start,
             limit=p.int__limit,
             tbName="ranking3_log p left join usr u on p.UID=u.usrid",
-            columNames="p.*,u.*,p.DT+p.RANK+p.UID pk",
+            columNames="p.*,u.*",
             orderBy=" DT DESC,RANK ASC",
         )
-
+        idx=0
+        for r in rs['items']:
+            r['items']['pk']=idx
+            idx+=1
+        return rs
 #######################################################
 
 @route('/blg/game_chips_count_list/', method=['GET', 'POST'])
