@@ -1068,11 +1068,11 @@ def user_ranking_log_list():
             columNames="p.*,u.*",
             orderBy=" DT DESC,RANK ASC",
         )
-        idx=0
-        for r in rs['items']:
-            r['items']['pk']=idx
-            idx+=1
-        return rs
+    idx=0
+    for r in rs['items']:
+        r['items']['pk']=idx
+        idx+=1
+    return rs
 #######################################################
 
 @route('/blg/game_chips_count_list/', method=['GET', 'POST'])
