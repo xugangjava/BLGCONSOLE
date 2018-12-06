@@ -1168,15 +1168,12 @@ def get_channel_cur_version():
     p=ParamWarper(request)
     with DB() as db:
         r=db.sql_dict("""
-            SELECT v.`NAME`,v.UPDATE_LINK from channel_version v left join channel c on v.CHANNEL_ID=c.ID 
+            SELECT v.`NAME`,v.UPDATE_LINK,v.UPDATE_OPEN_FLAG from channel_version v left join channel c on v.CHANNEL_ID=c.ID 
             WHERE  c.`NO`='%s' AND v.NAME='%s'
         """,p.__CHANNEL,p.__VERSION)
-        v=db.sql_dict("""
-            select UPDATE_OPEN_FLAG from channel_version where NAME='%s';
-        """,p.__VERSION)
 
     return {
         'UPDATE_LINK':r['UPDATE_LINK'],
         'VERSION_NAME':r['NAME'],
-        'UPDATE_OPEN_FLAG':v['UPDATE_OPEN_FLAG']
+        'UPDATE_OPEN_FLAG':r['UPDATE_OPEN_FLAG']
     }
