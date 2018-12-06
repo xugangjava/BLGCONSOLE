@@ -997,7 +997,7 @@ def do_users_avastar_approve():
                 update usr u left join avastar_approve a on u.usrid=a.UID set u.imheadurl=CONCAT(a.IMAGE_URL,'!avastar') where a.ID in (%s)
             """, ','.join([str(a) for a in ids]))
         # 删除审核记录
-        #db.sql_exec("DELETE from avastar_approve where id in(%s)", ','.join([str(a) for a in ids]))
+        db.sql_exec("DELETE from avastar_approve where id in(%s)", ','.join([str(a) for a in ids]))
         db.commit()
     return SUCCESS
 
