@@ -1169,9 +1169,8 @@ def get_channel_cur_version():
     with DB() as db:
         r=db.sql_dict("""
             SELECT v.`NAME`,v.UPDATE_LINK from channel_version v left join channel c on v.CHANNEL_ID=c.ID 
-            WHERE  c.`NO`='%s'
-            order by v.ID desc LIMIT 1
-        """,p.__CHANNEL)
+            WHERE  c.`NO`='%s' AND v.NAME='%s'
+        """,p.__CHANNEL,p.__VERSION)
         v=db.sql_dict("""
             select UPDATE_OPEN_FLAG from channel_version where NAME='%s';
         """,p.__VERSION)
