@@ -125,6 +125,8 @@ Ext.onReady(function () {
                                         {fieldLabel: '金钱', name: 'chips',readOnly: true},
                                         {fieldLabel: '积分', name: 'lotto',readOnly: true},
                                         {fieldLabel: '运气值', name: 'luck'},
+                                        {fieldLabel: '筹码余额上限', name: 'chipslimit'},
+                                        {fieldLabel: '筹码余额下限', name: 'chipslow'},
                                         {fieldLabel: '等级', name: 'level',readOnly: true},
                                         {fieldLabel: '经验', name: 'exp',readOnly: true},
                                         {fieldLabel: '渠道', name: 'versionid',readOnly: true},

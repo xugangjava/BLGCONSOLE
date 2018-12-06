@@ -204,7 +204,7 @@ def do_edit_user_info():
     p = ParamWarper(request)
     with DB() as db:
         if p.__update_luck:
-            db.sql_exec("update usr  set luck=%d where usrid=%d;",p.int__luck,p.int__pk)
+            db.sql_exec("update usr  set luck=%d,chipslimit=%d,chipslow=%d where usrid=%d;",p.int__luck,p.int__chipslimit,p.int__chipslow,p.int__pk)
         else:
             db.sql_exec("""
                 update usr 
@@ -607,6 +607,7 @@ def version_list():
             ,v.USR_COUNT
             ,v.UPDATE_COUNT
             ,v.OPEN_MY_CARD_PAY
+            ,v.UPDATE_OPEN_FLAG
             FROM
              channel_version v LEFT JOIN channel c 
             ON v.CHANNEL_ID = c.ID
@@ -637,10 +638,10 @@ def do_edit_version():
     with DB() as db:
         db.sql_exec("""
                 UPDATE poker.channel_version 
-        SET NAME = '%s' , IS_APPROVE = %d, CHANNEL_ID = %d, LAN_ID = %d ,UPDATE_LINK='%s', OPEN_MY_CARD_PAY=%d
+        SET NAME = '%s' , IS_APPROVE = %d, CHANNEL_ID = %d, LAN_ID = %d ,UPDATE_LINK='%s', OPEN_MY_CARD_PAY=%d,UPDATE_OPEN_FLAG='%s'
         WHERE id=%d-- Please complete
         ; """, p.str__VNAME, 1 if p.__IS_APPROVE in ('true',1) else 0, p.int__CID, p.int__LAN_ID, p.__UPDATE_LINK,
-                    p.__OPEN_MY_CARD_PAY, p.__pk)
+                    p.__OPEN_MY_CARD_PAY, p.__UPDATE_OPEN_FLAG, p.__pk)
         db.commit()
     return SUCCESS
 
@@ -996,7 +997,7 @@ def do_users_avastar_approve():
                 update usr u left join avastar_approve a on u.usrid=a.UID set u.imheadurl=CONCAT(a.IMAGE_URL,'!avastar') where a.ID in (%s)
             """, ','.join([str(a) for a in ids]))
         # 删除审核记录
-        db.sql_exec("DELETE from avastar_approve where id in(%s)", ','.join([str(a) for a in ids]))
+        #db.sql_exec("DELETE from avastar_approve where id in(%s)", ','.join([str(a) for a in ids]))
         db.commit()
     return SUCCESS
 

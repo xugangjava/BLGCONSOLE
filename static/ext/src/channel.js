@@ -159,7 +159,8 @@ Ext.onReady(function () {
                                 },
                                 {fieldLabel: 'MYCARD', name: 'OPEN_MY_CARD_PAY', value: 0},
                                 {fieldLabel: '语言编号', name: 'LAN_ID', value: '41'},
-                                {fieldLabel: '升级包名', name: 'UPDATE_LINK',allowBlank:true}
+                                {fieldLabel: '升级包名', name: 'UPDATE_LINK',allowBlank:true},
+                                {fieldLabel: '升级开关', name: 'UPDATE_OPEN_FLAG',allowBlank:true}
                             ],
                             success: function () {
                                 alert('修改成功!');
@@ -185,6 +186,7 @@ Ext.onReady(function () {
                     {header: '渠道名称', dataIndex: 'NAME', width: 120},
                     {header: '渠道编号', dataIndex: 'NO', width: 120},
                     {header: '版本名称', dataIndex: 'VNAME', width: 120},
+                    {header: '强制更新开关', dataIndex: 'UPDATE_OPEN_FLAG', width: 120},
                     {header: '更新包名', dataIndex: 'UPDATE_LINK', width: 120},
                     {header: '版本人数', dataIndex: 'USR_COUNT', width: 120},
                     {header: '升级人数', dataIndex: 'UPDATE_COUNT', width: 120},

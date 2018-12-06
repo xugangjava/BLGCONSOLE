@@ -1161,3 +1161,23 @@ def my_card_report():
                                    , StartDateTime, EndDateTime)
         rs = '<BR>'.join([r['MyCardString'] for r in rs])
         return rs
+
+
+@route('/api/get_channel_cur_version/', method=['GET', 'POST'])
+def get_channel_cur_version():
+    p=ParamWarper(request)
+    with DB() as db:
+        r=db.sql_dict("""
+            SELECT v.`NAME`,v.UPDATE_LINK from channel_version v left join channel c on v.CHANNEL_ID=c.ID 
+            WHERE  c.`NO`='%s'
+            order by v.ID desc LIMIT 1
+        """,p.__CHANNEL)
+        v=db.sql_dict("""
+            select UPDATE_OPEN_FLAG from channel_version where NAME='%s';
+        """,p.__VERSION)
+
+    return {
+        'UPDATE_LINK':r['UPDATE_LINK'],
+        'VERSION_NAME':r['NAME'],
+        'UPDATE_OPEN_FLAG':v['UPDATE_OPEN_FLAG']
+    }
