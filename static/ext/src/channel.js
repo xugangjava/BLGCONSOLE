@@ -5,7 +5,12 @@ Ext.onReady(function () {
         version_grid = Ext.id(),
         broatcast_grid = Ext.id(),
         channel_grid = Ext.id();
-
+    var game_watch_store = new Ext.data.JsonStore({
+        fields: ['LOG_TIME', 'BAIJIALE', 'BLACKJACK', 'LOBBY','SLOTS', 'VP', 'LHJ'],
+        root: 'items',
+        autoLoad: true,
+        url: '/blg/game_watch/?chart=1'
+    });
     main_left_tree.getRootNode().appendChild({
         text: '系统管理',
         iconCls: 'Bulletright',
@@ -259,58 +264,104 @@ Ext.onReady(function () {
                     {header: '发送渠道', dataIndex: 'channel', width: 120}
                 ]
             }
-        },{
+        }, {
             text: '系统信息',
             leaf: true,
             iconCls: 'Bulletright',
             view: {
-                xtype: 'basegrid',
-                title: '系统信息',
-                action: '/blg/game_watch/',
-                id: 'game_watch_grid',
-                flex: 2,
+                xtype: 'panel',
+                layout: {
+                    type: 'vbox',
+                    padding: '1',
+                    align: 'stretch'
+                },
+                border: false,
+                flex: 6,
                 tbar: [{
-                    iconCls: 'Databaseadd',
-                    text: '添加重启时间',
-                    handler: function () {
-                        var me = Ext.getCmp('game_watch_grid');
-                        var store = me.getStore();
-                        var json = me.getFirstSel();
-                        if (!json) return;
-                        var win = new XG.Control.SimpelPoupForm({
-                            layout: 'form',
-                            title: '添加重启时间',
-                            width: 400,
-                            height: 380,
-                            fieldWidth: 250,
-                            url: '/blg/game_watch/?edit=1',
-                            items: [
-                                {fieldLabel: '游戏编号', name: 'GAME_NAME',readOnly:true},
-                                {fieldLabel: '定时重启时间', name: 'RESTART_TIME',xtype:'datetimefield'}
-                            ],
-                            success: function () {
-                                alert('添加成功!');
-                                store.reload();
-                            }
-                        });
-                        win.fill(json);
-                        win.show();
-                    }
-                }, {
                     text: '刷新',
                     iconCls: 'Databaserefresh',
                     handler: function () {
-                        var me = Ext.getCmp('game_watch_grid');
-                        me.getStore().reload();
+                        game_watch_store.reload();
                     }
                 }],
-                nopadding: true,
-                columes: [
-                    {header: '游戏编号', dataIndex: 'GAME_NAME', width: 240},
-                    {header: '在线人数', dataIndex: 'ONLINE_COUNT', width: 240},
-                    {header: '响应时间', dataIndex: 'PING_TIME', width: 240},
-                    {header: '重启时间', dataIndex: 'RESTART_TIME', width: 240}
-                ]
+                items: [{
+                    xtype: 'linechart',
+                    store: game_watch_store,
+                    url: '/static/ext/resources/charts.swf',
+                    xField: 'LOG_TIME',
+                    flex: 4,
+                    series: [
+                        {type: 'line', displayName: '百家乐在线', yField: 'BAIJIALE', style: {color: 0xF79709}},
+                        {type: 'line', displayName: '21在线', yField: 'BLACKJACK', style: {color: 0x66FC00}},
+                        {type: 'line', displayName: '大厅在线', yField: 'LOBBY', style: {color: 0x679709}},
+                        {type: 'line', displayName: 'SLOTS在线', yField: 'SLOTS', style: {color: 0x379709}},
+                        {type: 'line', displayName: 'VP在线', yField: 'VP', style: {color: 0x279709}}
+                    ],
+                    extraStyle: {
+                        legend: {
+                            display: 'bottom',
+                            padding: 5,
+                            font: {
+                                family: 'Tahoma',
+                                size: 13
+                            }
+                        }
+                    },
+                    listeners: {
+                        itemclick: function (o) {
+                            var rec = store.getAt(o.index);
+                            Ext.example.msg('详细信息', '{0}.', rec.get('name'));
+                        }
+                    }
+                }, {
+                    xtype: 'basegrid',
+                    title: '系统信息',
+                    action: '/blg/game_watch/',
+                    id: 'game_watch_grid',
+                    flex: 4,
+                    tbar: [{
+                        iconCls: 'Databaseadd',
+                        text: '添加重启时间',
+                        handler: function () {
+                            var me = Ext.getCmp('game_watch_grid');
+                            var store = me.getStore();
+                            var json = me.getFirstSel();
+                            if (!json) return;
+                            var win = new XG.Control.SimpelPoupForm({
+                                layout: 'form',
+                                title: '添加重启时间',
+                                width: 400,
+                                height: 380,
+                                fieldWidth: 250,
+                                url: '/blg/game_watch/?edit=1',
+                                items: [
+                                    {fieldLabel: '游戏编号', name: 'GAME_NAME',readOnly:true},
+                                    {fieldLabel: '定时重启时间', name: 'RESTART_TIME',xtype:'datetimefield'}
+                                ],
+                                success: function () {
+                                    alert('添加成功!');
+                                    store.reload();
+                                }
+                            });
+                            win.fill(json);
+                            win.show();
+                        }
+                    }, {
+                        text: '刷新',
+                        iconCls: 'Databaserefresh',
+                        handler: function () {
+                            var me = Ext.getCmp('game_watch_grid');
+                            me.getStore().reload();
+                        }
+                    }],
+                    nopadding: true,
+                    columes: [
+                        {header: '游戏编号', dataIndex: 'GAME_NAME', width: 240},
+                        {header: '在线人数', dataIndex: 'ONLINE_COUNT', width: 240},
+                        {header: '响应时间', dataIndex: 'PING_TIME', width: 240},
+                        {header: '重启时间', dataIndex: 'RESTART_TIME', width: 240}
+                    ]
+                }]
             }
         }]
     });

@@ -1361,6 +1361,11 @@ def game_watch():
             db.commit()
             return SUCCESS
 
+    def chart():
+        with DB() as db:
+            return db.sql_no_padding("select * from game_watch_online ")
+
+    if p.__chart:return chart()
     if p.__edit:return edit()
     with DB() as db:
         return db.sql_no_padding("select * from game_watch")
