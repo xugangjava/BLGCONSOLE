@@ -751,7 +751,7 @@ def api_luck_draw_history_list():
                  LEFT JOIN exchange_config c ON e.EXID = c.ID
                 WHERE
                  e.EXTYPE = '积分抽奖' AND
-                 e.EXTIME > f_today_min()  ORDER  BY   e.EXTIME DESC 
+                 e.EXTIME > DATE(now())  ORDER  BY   e.EXTIME DESC 
             """)
 
         return db.sql_array("""
@@ -766,7 +766,7 @@ def api_luck_draw_history_list():
              LEFT JOIN exchange_config c ON e.EXID = c.ID
             WHERE
              e.EXTYPE = '积分抽奖' AND
-             e.EXTIME > f_today_min()  ORDER  BY   e.EXTIME DESC 
+             e.EXTIME > DATE(now())   ORDER  BY   e.EXTIME DESC 
         """)
 
 
