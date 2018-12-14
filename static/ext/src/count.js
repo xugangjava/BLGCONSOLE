@@ -46,7 +46,7 @@ Ext.onReady(function () {
 
 
     var gm_win_rate = new Ext.data.JsonStore({
-        fields: ['TM', 'RATE', 'ID'],
+        fields: ['TM', 'REATE', 'ID'],
         root: 'items',
         autoLoad: true,
         url: '/blg/game_win_chart/?chart=1'
@@ -382,7 +382,7 @@ Ext.onReady(function () {
                 url: '/static/ext/resources/charts.swf',
                 xField: 'TM',
                 series: [
-                    {type: 'line', displayName: 'RATE', yField: 'RATE', style: {color: 0xF79709}}
+                    {type: 'line', displayName: 'RATE', yField: 'REATE', style: {color: 0xF79709}}
                 ],
                 extraStyle: {
                     legend: {
