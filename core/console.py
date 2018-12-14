@@ -1387,6 +1387,12 @@ def user_item_log_list():
             condition=' AND '.join(condition)
         )
 
+@route('/blg/game_win_chart/', method=['GET', 'POST'])
+@login_require_ajax
+def game_win_chart():
+    with DB() as db:
+        return db.sql_no_padding("select * from gm_win_rate order by ID desc limit 0,80")
+
 
 
 #######################################################

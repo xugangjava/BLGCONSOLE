@@ -49,7 +49,7 @@ Ext.onReady(function () {
         fields: ['TM', 'RATE', 'ID'],
         root: 'items',
         autoLoad: true,
-        url: '/blg/game_count_list/?chart=1'
+        url: '/blg/game_win_chart/?chart=1'
     });
 
     var pay_log_grid = Ext.id(),
