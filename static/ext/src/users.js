@@ -598,6 +598,72 @@ Ext.onReady(function () {
                     }
                 ]
             }
+        },{
+            text: '用户道具日志',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'panel',
+                layout: {
+                    type: 'vbox',
+                    padding: '1',
+                    align: 'stretch',
+                    html: ''
+                },
+                border: false,
+                flex: 6,
+                nopadding: false,
+                items: [{
+                    xtype: 'form',
+                    nopadding: true,
+                    flex: 1,
+                    padding: 10,
+                    id: "user_item_log_search_form",
+                    defaultType: 'textfield',
+                    items: [
+                        {fieldLabel: '用户ID', name: 'UID', xtype: 'numberfield'},
+                        {fieldLabel: 'REASON', name: 'REASON'}
+                    ],
+                    buttons: [{
+                        text: '重置查询条件',
+                        handler: function () {
+                            var form = Ext.getCmp("user_item_log_search_form").getForm();
+                            form.reset();
+                        }
+                    },
+                        {
+                            text: '查询',
+                            handler: function () {
+                                var form = Ext.getCmp("user_item_log_search_form");
+                                var obj = form.getForm().getValues();
+                                var grid = Ext.getCmp("user_item_log_list_grid");
+                                grid.search(obj);
+                            }
+                        }
+                    ]
+                }, {
+                        xtype: 'basegrid',
+                        action: '/blg/user_item_log_list/',
+                        FW: 600,
+                        FH: 425,
+                        flex: 4,
+                        id: "user_item_log_list_grid",
+                        tbar: [],
+                        columes: [
+                            {header: 'ID', dataIndex: 'ID', width: 120},
+                            {header: '用户ID', dataIndex: 'UID', width: 120},
+                            {header: '用户名', dataIndex: 'phone', width: 120},
+                            {header: '昵称', dataIndex: 'nickname', width: 120},
+                            {header: '道具名称', dataIndex: 'ITEM_NAME', width: 120},
+                            {header: '变更前数量', dataIndex: 'ITEM_NUM_BEFORE', width: 120},
+                            {header: '变更后数量', dataIndex: 'ITEM_NUM_AFTER', width: 100},
+                            {header: '变更数量', dataIndex: 'ITEM_NUM_CHANGE', width: 100},
+                            {header: '变更原因', dataIndex: 'REASON'},
+                            {header: '变更时间', dataIndex: 'TM'},
+                            {header: '赠送/接收', dataIndex: 'TO_UID'}
+                        ]
+                }]
+            }
         }]
     });
     main_left_tree.doLayout();

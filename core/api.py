@@ -1177,3 +1177,10 @@ def get_channel_cur_version():
         'VERSION_NAME':r['NAME'],
         'UPDATE_OPEN_FLAG':r['UPDATE_OPEN_FLAG']
     }
+
+
+@route('/api/get_usr_item_change_log/', method=['GET', 'POST'])
+def api_get_usr_item_change_log():
+    p=ParamWarper(request)
+    with DB() as db:
+        return db.sql_no_padding("select * from usr_item_log WHERE UID=%d  ORDER BY ID DESC limit 0,50;",p.uid)

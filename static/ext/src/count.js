@@ -45,6 +45,13 @@ Ext.onReady(function () {
     });
 
 
+    var gm_win_rate = new Ext.data.JsonStore({
+        fields: ['TM', 'RATE', 'ID'],
+        root: 'items',
+        autoLoad: true,
+        url: '/blg/game_count_list/?chart=1'
+    });
+
     var pay_log_grid = Ext.id(),
         active_log_search_form = Ext.id(),
         robot_play_grid = Ext.id(),
@@ -364,6 +371,35 @@ Ext.onReady(function () {
                     {header: '总记录次数', dataIndex: 'TOTAL_LOG_TIMES', width: 120},
                     {header: '在线人数', dataIndex: 'ONLINE_COUNT', width: 120}
                 ]
+            }
+        }, {
+            text: '游戏输赢概率',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'linechart',
+                store: gm_win_rate,
+                url: '/static/ext/resources/charts.swf',
+                xField: 'TM',
+                series: [
+                    {type: 'line', displayName: 'RATE', yField: 'RATE', style: {color: 0xF79709}}
+                ],
+                extraStyle: {
+                    legend: {
+                        display: 'bottom',
+                        padding: 5,
+                        font: {
+                            family: 'Tahoma',
+                            size: 13
+                        }
+                    }
+                },
+                listeners: {
+                    itemclick: function (o) {
+                        var rec = store.getAt(o.index);
+                        Ext.example.msg('详细信息', '{0}.', rec.get('name'));
+                    }
+                }
             }
         }, {
             text: '筹码发放统计',
