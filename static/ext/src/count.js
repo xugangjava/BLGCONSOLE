@@ -384,12 +384,12 @@ Ext.onReady(function () {
                 url: '/static/ext/resources/charts.swf',
                 xField: 'TM',
                 series: [
-                    {type: 'line', displayName: 'RATE', yField: 'V_21_RATE', style: {color: 0xF79709}},
-                    {type: 'line', displayName: 'RATE', yField: 'V_BJL_RATE', style: {color: 0xF89709}},
-                    {type: 'line', displayName: 'RATE', yField: 'V_VP_RATE', style: {color: 0xF99709}},
-                    {type: 'line', displayName: 'RATE', yField: 'V_SLOTS_SGJ_RATE', style: {color: 0xF19709}},
-                    {type: 'line', displayName: 'RATE', yField: 'V_SLOTS_YMR_RATE', style: {color: 0xF29709}},
-                    {type: 'line', displayName: 'RATE', yField: 'V_SLOTS_JPM_RATE', style: {color: 0xF39709}}
+                    {type: 'line', displayName: 'RATE', yField: 'V_21_RATE', style: {color: 0x000000}},
+                    {type: 'line', displayName: 'RATE', yField: 'V_BJL_RATE', style: {color: 0xAE0000}},
+                    {type: 'line', displayName: 'RATE', yField: 'V_VP_RATE', style: {color: 0x006030}},
+                    {type: 'line', displayName: 'RATE', yField: 'V_SLOTS_SGJ_RATE', style: {color: 0x000079}},
+                    {type: 'line', displayName: 'RATE', yField: 'V_SLOTS_YMR_RATE', style: {color: 0xFFD306}},
+                    {type: 'line', displayName: 'RATE', yField: 'V_SLOTS_JPM_RATE', style: {color: 0x336666}}
                 ],
                 extraStyle: {
                     legend: {
