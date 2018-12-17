@@ -1183,4 +1183,9 @@ def get_channel_cur_version():
 def api_get_usr_item_change_log():
     p=ParamWarper(request)
     with DB() as db:
-        return db.sql_no_padding("select * from usr_item_log WHERE UID=%d  ORDER BY ID DESC limit 0,50;",p.uid)
+        rs = db.sql_dict("select versionid from usr where usrid=%d", p.uid)
+        versionid = rs['versionid']
+        if str(versionid).endswith('EN'):
+            return db.sql_no_padding( "SELECT UID, ITEM_TYPE, ITEM_NUM, ITEM_NAME_EN ITEM_NAME  FROM poker.usr_item WHERE UID=%d  ORDER BY ID DESC limit 0,50;",p.uid)
+        else:
+            return db.sql_no_padding("SELECT UID, ITEM_TYPE, ITEM_NUM, ITEM_NAME FROM poker.usr_item WHERE UID=%d  ORDER BY ID DESC limit 0,50;", p.uid)
