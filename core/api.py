@@ -1186,6 +1186,6 @@ def api_get_usr_item_change_log():
         rs = db.sql_dict("select versionid from usr where usrid=%d", p.uid)
         versionid = rs['versionid']
         if str(versionid).endswith('EN'):
-            return db.sql_no_padding( "SELECT UID, ITEM_TYPE, ITEM_NUM, ITEM_NAME_EN ITEM_NAME  FROM poker.usr_item WHERE UID=%d  ORDER BY ID DESC limit 0,50;",p.uid)
+            return db.sql_no_padding( "SELECT  ID, UID, ITEM_NAME_EN ITEM_NAME, ITEM_NUM_BEFORE, TM, REASON, ITEM_NUM_AFTER, ITEM_NUM_CHANGE, TO_UID  FROM poker.usr_item_log WHERE UID=%d  ORDER BY ID DESC limit 0,50;",p.uid)
         else:
-            return db.sql_no_padding("SELECT UID, ITEM_TYPE, ITEM_NUM, ITEM_NAME FROM poker.usr_item WHERE UID=%d  ORDER BY ID DESC limit 0,50;", p.uid)
+            return db.sql_no_padding("SELECT ID, UID, ITEM_NAME, ITEM_NUM_BEFORE, TM, REASON, ITEM_NUM_AFTER, ITEM_NUM_CHANGE, TO_UID FROM poker.usr_item_log WHERE UID=%d  ORDER BY ID DESC limit 0,50;", p.uid)
