@@ -1363,8 +1363,10 @@ def game_watch():
 
     def chart():
         with DB() as db:
-            return db.sql_no_padding("select * from game_watch_online ")
-
+            rs= db.sql_no_padding("select * from game_watch_online ORDER  BY LOG_TIME DESC LIMIT 0,80")
+        rs['items'].reverse()
+        return rs
+    
     if p.__chart:return chart()
     if p.__edit:return edit()
     with DB() as db:
