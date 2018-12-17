@@ -1391,7 +1391,7 @@ def user_item_log_list():
 @login_require_ajax
 def game_win_chart():
     with DB() as db:
-        return db.sql_no_padding("select * from gm_win_rate order by ID desc limit 0,80")
+        return db.sql_no_padding("select * from gm_win_rate order by ID  limit 0,80")
 
 
 
