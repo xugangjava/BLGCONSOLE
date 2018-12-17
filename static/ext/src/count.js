@@ -384,12 +384,12 @@ Ext.onReady(function () {
                 url: '/static/ext/resources/charts.swf',
                 xField: 'TM',
                 series: [
-                    {type: 'line', displayName: 'RATE', yField: 'V_21_RATE', style: {color: 0x000000}},
-                    {type: 'line', displayName: 'RATE', yField: 'V_BJL_RATE', style: {color: 0xAE0000}},
-                    {type: 'line', displayName: 'RATE', yField: 'V_VP_RATE', style: {color: 0x006030}},
-                    {type: 'line', displayName: 'RATE', yField: 'V_SLOTS_SGJ_RATE', style: {color: 0x000079}},
-                    {type: 'line', displayName: 'RATE', yField: 'V_SLOTS_YMR_RATE', style: {color: 0xFFD306}},
-                    {type: 'line', displayName: 'RATE', yField: 'V_SLOTS_JPM_RATE', style: {color: 0x336666}}
+                    {type: 'line', displayName: '21点概率', yField: 'V_21_RATE', style: {color: 0x000000}},
+                    {type: 'line', displayName: '百家乐概率', yField: 'V_BJL_RATE', style: {color: 0xAE0000}},
+                    {type: 'line', displayName: '翻牌机概率', yField: 'V_VP_RATE', style: {color: 0x006030}},
+                    {type: 'line', displayName: 'SLOTS水果机概率', yField: 'V_SLOTS_SGJ_RATE', style: {color: 0x000079}},
+                    {type: 'line', displayName: 'SLOTS野蛮人概率', yField: 'V_SLOTS_YMR_RATE', style: {color: 0xFFD306}},
+                    {type: 'line', displayName: 'SLOTS金瓶梅概率', yField: 'V_SLOTS_JPM_RATE', style: {color: 0x336666}}
                 ],
                 extraStyle: {
                     legend: {
