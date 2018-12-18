@@ -379,34 +379,165 @@ Ext.onReady(function () {
             leaf: true,
             iconCls: 'Bulletright',
             view: {
-                xtype: 'linechart',
-                store: gm_win_rate,
-                url: '/static/ext/resources/charts.swf',
-                xField: 'TM',
-                series: [
-                    {type: 'line', displayName: '21点概率', yField: 'V_21_RATE', style: {color: 0x000000}},
-                    {type: 'line', displayName: '百家乐概率', yField: 'V_BJL_RATE', style: {color: 0xAE0000}},
-                    {type: 'line', displayName: '翻牌机概率', yField: 'V_VP_RATE', style: {color: 0x006030}},
-                    {type: 'line', displayName: 'SLOTS水果机概率', yField: 'V_SLOTS_SGJ_RATE', style: {color: 0x000079}},
-                    {type: 'line', displayName: 'SLOTS野蛮人概率', yField: 'V_SLOTS_YMR_RATE', style: {color: 0xFFD306}},
-                    {type: 'line', displayName: 'SLOTS金瓶梅概率', yField: 'V_SLOTS_JPM_RATE', style: {color: 0x336666}}
-                ],
-                extraStyle: {
-                    legend: {
-                        display: 'bottom',
-                        padding: 5,
-                        font: {
-                            family: 'Tahoma',
-                            size: 13
-                        }
-                    }
+                xtype: 'panel',
+                layout: {
+                    type: 'vbox',
+                    padding: '1',
+                    align: 'stretch',
                 },
-                listeners: {
-                    itemclick: function (o) {
-                        var rec = store.getAt(o.index);
-                        Ext.example.msg('详细信息', '{0}.', rec.get('name'));
-                    }
-                }
+                border: false,
+                flex: 5,
+                items: [{
+                        xtype: 'linechart',
+                        store: gm_win_rate,
+                        url: '/static/ext/resources/charts.swf',
+                        xField: 'TM',
+                        flex: 2,
+                        series: [
+                            {type: 'line', displayName: '21点概率', yField: 'V_21_RATE', style: {color: 0x000000}}
+                        ],
+                        extraStyle: {
+                            legend: {
+                                display: 'bottom',
+                                padding: 5,
+                                font: {
+                                    family: 'Tahoma',
+                                    size: 13
+                                }
+                            }
+                        },
+                        listeners: {
+                            itemclick: function (o) {
+                                var rec = store.getAt(o.index);
+                                Ext.example.msg('详细信息', '{0}.', rec.get('name'));
+                            }
+                        }
+                    },{
+                        xtype: 'linechart',
+                        store: gm_win_rate,
+                        url: '/static/ext/resources/charts.swf',
+                        xField: 'TM',
+                        flex: 2,
+                        series: [
+                            {type: 'line', displayName: '百家乐概率', yField: 'V_BJL_RATE', style: {color: 0xAE0000}}
+                        ],
+                        extraStyle: {
+                            legend: {
+                                display: 'bottom',
+                                padding: 5,
+                                font: {
+                                    family: 'Tahoma',
+                                    size: 13
+                                }
+                            }
+                        },
+                        listeners: {
+                            itemclick: function (o) {
+                                var rec = store.getAt(o.index);
+                                Ext.example.msg('详细信息', '{0}.', rec.get('name'));
+                            }
+                        }
+                    },{
+                        xtype: 'linechart',
+                        store: gm_win_rate,
+                        url: '/static/ext/resources/charts.swf',
+                        xField: 'TM',
+                        flex: 2,
+                        series: [
+                            {type: 'line', displayName: '翻牌机概率', yField: 'V_VP_RATE', style: {color: 0x006030}}
+                        ],
+                        extraStyle: {
+                            legend: {
+                                display: 'bottom',
+                                padding: 5,
+                                font: {
+                                    family: 'Tahoma',
+                                    size: 13
+                                }
+                            }
+                        },
+                        listeners: {
+                            itemclick: function (o) {
+                                var rec = store.getAt(o.index);
+                                Ext.example.msg('详细信息', '{0}.', rec.get('name'));
+                            }
+                        }
+                    },{
+                        xtype: 'linechart',
+                        store: gm_win_rate,
+                        url: '/static/ext/resources/charts.swf',
+                        xField: 'TM',
+                        flex: 2,
+                        series: [
+                            {type: 'line', displayName: 'SLOTS水果机概率', yField: 'V_SLOTS_SGJ_RATE', style: {color: 0x000079}}
+                        ],
+                        extraStyle: {
+                            legend: {
+                                display: 'bottom',
+                                padding: 5,
+                                font: {
+                                    family: 'Tahoma',
+                                    size: 13
+                                }
+                            }
+                        },
+                        listeners: {
+                            itemclick: function (o) {
+                                var rec = store.getAt(o.index);
+                                Ext.example.msg('详细信息', '{0}.', rec.get('name'));
+                            }
+                        }
+                    },{
+                        xtype: 'linechart',
+                        store: gm_win_rate,
+                        url: '/static/ext/resources/charts.swf',
+                        xField: 'TM',
+                        flex: 2,
+                        series: [
+                            {type: 'line', displayName: 'SLOTS野蛮人概率', yField: 'V_SLOTS_YMR_RATE', style: {color: 0xFFD306}}
+                        ],
+                        extraStyle: {
+                            legend: {
+                                display: 'bottom',
+                                padding: 5,
+                                font: {
+                                    family: 'Tahoma',
+                                    size: 13
+                                }
+                            }
+                        },
+                        listeners: {
+                            itemclick: function (o) {
+                                var rec = store.getAt(o.index);
+                                Ext.example.msg('详细信息', '{0}.', rec.get('name'));
+                            }
+                        }
+                    },{
+                        xtype: 'linechart',
+                        store: gm_win_rate,
+                        url: '/static/ext/resources/charts.swf',
+                        xField: 'TM',
+                        flex: 2,
+                        series: [
+                            {type: 'line', displayName: 'SLOTS金瓶梅概率', yField: 'V_SLOTS_JPM_RATE', style: {color: 0x336666}}
+                        ],
+                        extraStyle: {
+                            legend: {
+                                display: 'bottom',
+                                padding: 5,
+                                font: {
+                                    family: 'Tahoma',
+                                    size: 13
+                                }
+                            }
+                        },
+                        listeners: {
+                            itemclick: function (o) {
+                                var rec = store.getAt(o.index);
+                                Ext.example.msg('详细信息', '{0}.', rec.get('name'));
+                            }
+                        }
+                    }]
             }
         }, {
             text: '筹码发放统计',
