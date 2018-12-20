@@ -1379,6 +1379,10 @@ def user_item_log_list():
     condition = []
     if p.__UID: condition.append(" l.UID = " + str(p.__UID))
     if p.__REASON: condition.append(" l.REASON like ''%%%s%%''" % p.__REASON)
+    if p.__send:
+        condition.append("l.TO_UID!=0")
+    else:
+        condition.append("l.TO_UID=0")
     with DB() as db:
         return db.sql_padding(
             start=p.int__start,
@@ -1397,6 +1401,17 @@ def game_win_chart():
     rs['items'].reverse()
     return rs
 
-
+@route('/blg/game_win_21bust_list/', method=['GET', 'POST'])
+@login_require_ajax
+def game_win_21bust_list():
+    with DB() as db:
+        return db.sql_padding(
+            start=p.int__start,
+            limit=p.int__limit,
+            tbName="""usr_item_log l left JOIN usr u on l.UID=u.usrid""",
+            columNames="""*""",
+            orderBy='l.ID DESC',
+            condition=' AND '.join(condition)
+        )
 
 #######################################################
