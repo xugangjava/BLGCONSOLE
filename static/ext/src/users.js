@@ -730,6 +730,66 @@ Ext.onReady(function () {
                         ]
                 }]
             }
+        },{
+            text: '世界聊天日志',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'panel',
+                layout: {
+                    type: 'vbox',
+                    padding: '1',
+                    align: 'stretch',
+                    html: ''
+                },
+                border: false,
+                flex: 6,
+                nopadding: false,
+                items: [{
+                    xtype: 'form',
+                    nopadding: true,
+                    flex: 1,
+                    padding: 10,
+                    id: "game_world_message_search_form",
+                    defaultType: 'textfield',
+                    items: [
+                        {fieldLabel: '用户ID', name: 'UID', xtype: 'numberfield'}
+                    ],
+                    buttons: [{
+                        text: '重置查询条件',
+                        handler: function () {
+                            var form = Ext.getCmp("game_world_message_search_form").getForm();
+                            form.reset();
+                        }
+                    },
+                        {
+                            text: '查询',
+                            handler: function () {
+                                var form = Ext.getCmp("game_world_message_search_form");
+                                var obj = form.getForm().getValues();
+                                var grid = Ext.getCmp("game_world_message_list_gird");
+                                grid.search(obj);
+                            }
+                        }
+                    ]
+                }, {
+                        xtype: 'basegrid',
+                        action: '/blg/game_world_message_list/',
+                        FW: 600,
+                        FH: 425,
+                        flex: 4,
+                        id: "game_world_message_list_gird",
+                        tbar: [],
+                        columes: [
+                            {header: 'ID', dataIndex: 'ID', width: 120},
+                            {header: '用户ID', dataIndex: 'UID', width: 120},
+                            {header: '用户名', dataIndex: 'phone', width: 120},
+                            {header: '昵称', dataIndex: 'nickname', width: 120},
+                            {header: '消息内容', dataIndex: 'CONTENT', width: 300},
+                            {header: '变更时间', dataIndex: 'TM'}
+                        ]
+                }]
+            }
         }]
     });
     main_left_tree.doLayout();

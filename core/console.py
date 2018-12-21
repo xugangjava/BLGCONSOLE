@@ -1454,4 +1454,19 @@ def game_win_21bust_list():
             condition=' AND '.join(condition)
         )
 
+@route('/blg/game_world_message_list/', method=['GET', 'POST'])
+@login_require_ajax
+def game_world_message_list():
+    p=ParamWarper(request)
+    condition=[]
+    if p.__UID:condition.append("l.UID=%d" % p.__UID)
+    with DB() as db:
+        return db.sql_padding(
+            start=p.int__start,
+            limit=p.int__limit,
+            tbName="""coin_world_chat_log l left join  usr u on l.UID=u.usrid""",
+            columNames="""*""",
+            orderBy='ID DESC',
+            condition=' AND '.join(condition)
+        )
 #######################################################
