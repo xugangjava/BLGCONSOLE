@@ -264,6 +264,104 @@ Ext.onReady(function () {
                     {header: '发送渠道', dataIndex: 'channel', width: 120}
                 ]
             }
+        },{
+            text: '活动管理',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'basegrid',
+                title: '活动管理',
+                action: '/blg/gm_activti_list/',
+                id: broatcast_grid,
+                flex: 2,
+                tbar: [{
+                    iconCls: 'Databaseadd',
+                    text: '添加活动',
+                    handler: function () {
+                        var me = Ext.getCmp(broatcast_grid);
+                        var store = me.getStore();
+                        var win = new XG.Control.SimpelPoupForm({
+                            layout: 'form',
+                            title: '添加活动',
+                            width: 400,
+                            height: 380,
+                            fieldWidth: 250,
+                            url: '/blg/gm_activti_list/?add=1',
+                            items: [
+                                {fieldLabel: '发送次数', name: 'repeatcount'},
+                                {fieldLabel: '时间间隔(秒)', name: 'repeatgap'},
+                                {fieldLabel: '发送渠道', name: 'channel',allowBlank:true},
+                                {fieldLabel: '消息内容', name: 'content', xtype: 'textarea',allowBlank:true},
+                                {fieldLabel: '消息内容EN', name: 'en_content', xtype: 'textarea',allowBlank:true}
+                            ],
+                            success: function () {
+                                alert('添加成功!');
+                                store.reload();
+                            }
+                        });
+                        win.show();
+                    }
+                } , {
+                    iconCls: 'Databaseedit',
+                    text: '修改活动',
+                    handler: function () {
+                        var me = Ext.getCmp(broatcast_grid);
+                        var store = me.getStore();
+                        var win = new XG.Control.SimpelPoupForm({
+                            layout: 'form',
+                            title: '修改活动',
+                            width: 400,
+                            height: 380,
+                            fieldWidth: 250,
+                            url: '/blg/gm_activti_list/?edit=1',
+                            items: [
+                                {fieldLabel: '发送次数', name: 'repeatcount'},
+                                {fieldLabel: '时间间隔(秒)', name: 'repeatgap'},
+                                {fieldLabel: '发送渠道', name: 'channel',allowBlank:true},
+                                {fieldLabel: '消息内容', name: 'content', xtype: 'textarea',allowBlank:true},
+                                {fieldLabel: '消息内容EN', name: 'en_content', xtype: 'textarea',allowBlank:true}
+                            ],
+                            success: function () {
+                                alert('添加成功!');
+                                store.reload();
+                            }
+                        });
+                        win.show();
+                    }
+                }, {
+                    iconCls: 'Databasedelete',
+                    text: '删除活动',
+                    handler: function () {
+                        var me = Ext.getCmp(broatcast_grid);
+                        var json = me.getFirstSel();
+                        me.deleteRow('/blg/gm_activti_list/?del=1');
+                    }
+                }, {
+                    text: '刷新',
+                    iconCls: 'Databaserefresh',
+                    handler: function () {
+                        var me = Ext.getCmp(broatcast_grid);
+                        me.getStore().reload();
+                    }
+                }],
+                nopadding: true,
+                columes: [
+                    {header: 'ID', dataIndex: 'pk', width: 70},
+                    {header: '左侧文字', dataIndex: 'content', width: 120},
+                    {header: '左侧图片', dataIndex: 'repeatcount', width: 240},
+                    {header: '右侧文字', dataIndex: 'noticetime', width: 120},
+                    {header: '右侧图片', dataIndex: 'channel', width: 240},
+
+                    {header: '左侧文字_英文', dataIndex: 'content', width: 120},
+                    {header: '左侧图片_英文', dataIndex: 'repeatcount', width: 240},
+                    {header: '右侧文字_英文', dataIndex: 'noticetime', width: 120},
+                    {header: '右侧图片_英文', dataIndex: 'channel', width: 240},
+
+                    {header: '开始时间', dataIndex: 'content', width: 120},
+                    {header: '结束时间', dataIndex: 'content', width: 120},
+                    {header: '是否启用', dataIndex: 'content', width: 120},
+                ]
+            }
         }, {
             text: '系统信息',
             leaf: true,

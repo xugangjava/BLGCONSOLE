@@ -616,7 +616,8 @@ XG.Control.LocalCombo = Ext.extend(Ext.form.ComboBox, {
             displayField: 'text',
             mode: 'local',
             editable: false,
-            value: defaultValue
+            value: defaultValue,
+            listeners :this.listeners
         });
     },
     setValue: function(value) {

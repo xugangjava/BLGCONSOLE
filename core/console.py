@@ -1396,10 +1396,50 @@ def user_item_log_list():
 @route('/blg/game_win_chart/', method=['GET', 'POST'])
 @login_require_ajax
 def game_win_chart():
+    p=ParamWarper(request)
+    rs = "V_21_RATE RATE"
+
+    if p.__chat_type=='VBJL':
+        rs = "V_BJL_RATE RATE"
+
+    if p.__chat_type=='VVP':
+        rs = "V_VP_RATE RATE"
+
+    if p.__chat_type=='VSGJ':
+        rs = "V_SLOTS_SGJ_RATE RATE"
+
+    if p.__chat_type=='VYMR':
+        rs = "V_SLOTS_YMR_RATE RATE"
+
+    if p.__chat_type=='VJPM':
+        rs = "V_SLOTS_JPM_RATE RATE"
+
     with DB() as db:
-        rs= db.sql_no_padding("select * from gm_win_rate order by ID  DESC limit 0,100")
+        rs= db.sql_no_padding("select "+rs+",TM from gm_win_rate order by ID  DESC limit 0,100")
     rs['items'].reverse()
     return rs
+
+@route('/blg/gm_activti_list/', method=['GET', 'POST'])
+@login_require_ajax
+def gm_activti_list():
+    p=ParamWarper(request)
+
+    def add():
+        pass
+
+    def edit():
+        pass
+
+    def delete():
+        pass
+
+    if p.__add:return add()
+    if p.__edit:return edit()
+    if p.__delete:return delete()
+
+    with DB() as db:
+        return db.sql_no_padding("select * from gm_activti")
+
 
 @route('/blg/game_win_21bust_list/', method=['GET', 'POST'])
 @login_require_ajax
