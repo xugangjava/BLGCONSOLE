@@ -731,7 +731,7 @@ Ext.onReady(function () {
                 }]
             }
         },{
-            text: '世界聊天日志',
+            text: '世界聊天日志', 
             leaf: true,
             iconCls: 'Bulletright',
             view: {
