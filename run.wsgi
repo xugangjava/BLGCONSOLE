@@ -1,4 +1,5 @@
-
+from gevent import monkey
+monkey.patch_socket()
 import sys
 sys.path = ['C:/BLGCONSOLE/'] + sys.path
 import bottle
