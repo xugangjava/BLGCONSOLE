@@ -1,5 +1,4 @@
-from gevent import monkey
-monkey.patch_all()
+
 import sys
 sys.path = ['C:/BLGCONSOLE/'] + sys.path
 import bottle
