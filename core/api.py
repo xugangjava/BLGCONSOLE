@@ -3,7 +3,7 @@ import sitecustomize
 from bottle import post, request, error, HTTPResponse, get, view, route, template
 from common.pay import *
 from common.sms import *
-
+import requests
 
 #######################################################
 # 验证码相关 绑定账号
@@ -940,6 +940,7 @@ def mycard_auth_code():
 
 
 def mycard_pay(FacTradeSeq):
+
     with DB() as db:
         if db.sql_exists("select 1 from paycallback where PAYID='%s';", FacTradeSeq): return
         r = db.sql_dict("""
