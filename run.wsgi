@@ -12,11 +12,10 @@ from core.apis import *
 from core.coin_console import *
 
 session_opts = {
-    'session.type': 'file',
+    'session.type': 'ext:database',
+    'session.url': 'mysql+mysqldb://root:%s@localhost/poker?charset=utf8' % DB_PWD,
     'session.cookie_expires': 60000,
-    'session.data_dir': './data',
     'session.auto': True,
-   #'session.timeout': 100,
 }
 
 os.chdir(os.path.dirname(__file__))

@@ -93,3 +93,8 @@ def TRACE_ERROR(e):
     TRACE('e.message:\t%s', e.message)
     TRACE('traceback.print_exc():%s', traceback.print_exc())
     TRACE('traceback.format_exc():\n%s' % traceback.format_exc())
+
+
+#pip install Pillow
+#pip install inapppy==0.6
+#pip install DBUtils
