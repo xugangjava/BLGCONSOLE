@@ -345,9 +345,10 @@ def coin_race_lamp_list():
     if p.__add==1:return add()
     if p.__del==1:return delete()
     with DB() as db:
+        r = db.sql_dict("select GAME_UID from coin_usr where ID=%d;", p.session_cuid)
         return db.sql_no_padding("""
-            SELECT id pk, gm_coin_notice.* FROM gm_coin_notice
-        """)
+            SELECT id pk, gm_coin_notice.* FROM gm_coin_notice WHERE uid=%d
+        """,r['GAME_UID'])
 
 
 @route('/coin/coin_usr_list/', method=['GET', 'POST'])
