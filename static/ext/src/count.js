@@ -710,14 +710,56 @@ Ext.onReady(function () {
 
                     ]
                 }]
-
             }
-
-
-        }
-
-
-        ]
+        },{
+            text: '老虎机结果日志',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'basegrid',
+                action: '/blg/lhj_game_result_log/',
+                FW: 600,
+                FH: 425,
+                flex: 4,
+                id: 'lhj_game_result_log',
+                tbar: [],
+                columes: [
+                    {header: '游戏时间', dataIndex: 'RecordTime', width: 200},
+                    {header: '结果', dataIndex: 'ResultDesc', width: 200},
+                    {header: '最大赢取UID', dataIndex: 'MaxWInUID', width: 200},
+                ]
+            }
+        },{
+            text: '老虎机结果概率统计',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'basegrid',
+                action: '/blg/lhj_game_rate_result_log/',
+                FW: 600,
+                FH: 425,
+                flex: 4,
+                id: 'lhj_game_rate_result_log',
+                tbar: [],
+                columes: [
+                    {header: '日期', dataIndex: 'TM', width: 120},
+                    {header: '结果', dataIndex: 'RESULT', width: 120},
+                    {header: '出现次数', dataIndex: 'RESULT_COUNT', width: 120},
+                    {header: '总次数', dataIndex: 'TOTAL_COUNT', width: 120},
+                    {
+                        header: '出现概率', dataIndex: 'lotto', width: 100,
+                        renderer: function (value, cellmeta, record, rowIndex, columnIndex, store) {
+                            var data = record.data, RESULT_COUNT = data['RESULT_COUNT'], TOTAL_COUNT = data['TOTAL_COUNT'];
+                            if (!TOTAL_COUNT) {
+                                return 0;
+                            }
+                            var r = RESULT_COUNT * 1.0 / TOTAL_COUNT;
+                            return r.toFixed(2);
+                        }
+                    }
+                ]
+            }
+        }]
     });
     main_left_tree.doLayout();
 

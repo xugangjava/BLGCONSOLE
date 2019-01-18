@@ -1469,4 +1469,40 @@ def game_world_message_list():
             orderBy='ID DESC',
             condition=' AND '.join(condition)
         )
+
+
+@route('/blg/lhj_game_rate_result_log/', method=['GET', 'POST'])
+@login_require_ajax
+def lhj_game_rate_result_log():
+    p=ParamWarper(request)
+    condition=[]
+    with DB() as db:
+        return db.sql_padding(
+            start=p.int__start,
+            limit=p.int__limit,
+            tbName="""lhj_result_rate""",
+            columNames="""*""",
+            orderBy='TM DESC',
+            condition=' AND '.join(condition)
+        )
+
+
+
+@route('/blg/lhj_game_result_log/', method=['GET', 'POST'])
+@login_require_ajax
+def lhj_game_result_log():
+    p=ParamWarper(request)
+    condition = []
+    with DB() as db:
+        return db.sql_padding(
+            start=p.int__start,
+            limit=p.int__limit,
+            tbName="""lhj_game_result_log""",
+            columNames="""*""",
+            orderBy='RecordTime DESC',
+            condition=' AND '.join(condition)
+        )
+
+
+
 #######################################################
