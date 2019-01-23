@@ -829,7 +829,7 @@ def pay_coin_order_list():
                 ,u.regdevice
                 ,u.phone
                 ,u.lastLogintm
-                ,c.USERNAME CUSERNAME
+                ,c.USRNAME CUSERNAME
                 ,c.NICKNAME CNICKNAME
             """,
             condition=condition,
