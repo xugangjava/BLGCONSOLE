@@ -153,6 +153,8 @@ Ext.onReady(function () {
                         { header: '购买筹码', dataIndex: 'chips', width: 120 },
                         { header: '玩家用户名', dataIndex: 'phone', width: 120 },
                         { header: '玩家昵称', dataIndex: 'nickname', width: 120 },
+                        { header: '币商用户名', dataIndex: 'CUSERNAME', width: 120 },
+                        { header: '币商昵称', dataIndex: 'CNICKNAME', width: 120 },
                         { header: '支付方式', dataIndex: 'paychannelname', width: 120 },
                         { header: '订单状态', dataIndex: 'verify', width: 100 , renderer: verify_status},
                         { header: '订单编号', dataIndex: 'orderid', width: 100 },

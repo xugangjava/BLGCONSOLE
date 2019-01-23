@@ -799,7 +799,7 @@ def pay_coin_order_list():
             start=p.int__start,
             limit=p.int__limit,
             tbName="""
-                pay p INNER JOIN usr u ON p.usrId = u.usrid
+                pay p INNER JOIN usr u ON p.usrId = u.usrid left join coin_usr c on c.ID=p.cid
             """,
             columNames="""
                  p.id
@@ -829,6 +829,8 @@ def pay_coin_order_list():
                 ,u.regdevice
                 ,u.phone
                 ,u.lastLogintm
+                ,c.USERNAME CUSERNAME
+                ,c.NICKNAME CNICKNAME
             """,
             condition=condition,
             orderBy='  p.tim DESC '
