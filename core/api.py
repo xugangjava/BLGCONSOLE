@@ -458,7 +458,7 @@ def api_get_pay_way():
             # 国内ip 渠道非审核状态
             ios_pay = False
         platform = r['platform']
-        if open_my_card_pay==2 or r3['level'] < 12:
+        if open_my_card_pay==2 or r3['level'] < 1:
             open_my_card_pay = 0
     except:
         ios_pay = True
@@ -1190,3 +1190,16 @@ def api_get_usr_item_change_log():
             return db.sql_no_padding( "SELECT  ID, UID, ITEM_NAME_EN ITEM_NAME, ITEM_NUM_BEFORE, TM, REASON, ITEM_NUM_AFTER, ITEM_NUM_CHANGE, TO_UID  FROM poker.usr_item_log WHERE UID=%d  ORDER BY ID DESC limit 0,50;",p.uid)
         else:
             return db.sql_no_padding("SELECT ID, UID, ITEM_NAME, ITEM_NUM_BEFORE, TM, REASON, ITEM_NUM_AFTER, ITEM_NUM_CHANGE, TO_UID FROM poker.usr_item_log WHERE UID=%d  ORDER BY ID DESC limit 0,50;", p.uid)
+
+
+@route('/api/google_pay_lost/', method=['GET', 'POST'])
+def google_pay_callback():
+    p = ParamWarper(request)
+    TRACE(str(p.params))
+    if not p.__TRANID or not p.__PYNUM: return
+    with DB() as db:
+        if db.sql_exists("select 1 from pay_lost where TRANID='%s' and PYNUM='%s';", p.__TRANID, p.__PYNUM):
+            return
+        db.sql_exec("INSERT INTO poker.pay_lost(TRANID, PYNUM) VALUES ('%s', '%s');", p.__TRANID, p.__PYNUM)
+        db.commit()
+    return SUCCESS
