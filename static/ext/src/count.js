@@ -759,7 +759,25 @@ Ext.onReady(function () {
                     }
                 ]
             }
-        }]
+        },{
+            text: '百家乐结果日志',
+            leaf: true,
+            iconCls: 'Bulletright',
+            view: {
+                xtype: 'basegrid',
+                action: '/blg/bjl_game_result_log/',
+                FW: 600,
+                FH: 425,
+                flex: 4,
+                id: 'bjl_game_result_log',
+                tbar: [],
+                columes: [
+                    {header: '游戏时间', dataIndex: 'TM', width: 200},
+                    {header: '结果', dataIndex: 'CARD', width: 200},
+                    {header: '房间类型', dataIndex: 'ROOM_TYPE', width: 200}
+                ]
+            }
+        },]
     });
     main_left_tree.doLayout();
 
