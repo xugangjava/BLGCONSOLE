@@ -461,7 +461,8 @@ def api_get_pay_way():
         if open_my_card_pay==2 or r3['level'] < 1:
             open_my_card_pay = 0
         if open_my_card_pay==3:
-            open_my_card_pay=1 if  r3['level'] >8 else 0
+            open_my_card_pay=1
+            if r3['level'] < 8:open_my_card_pay=0
     except:
         ios_pay = True
         open_my_card_pay = 0
