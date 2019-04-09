@@ -800,7 +800,7 @@ def pay_order_lost_list():
             start=p.int__start,
             limit=p.int__limit,
             tbName="""
-                pay_lost pl INNER JOIN pay p ON p.payNum = p.payNum 
+                pay_lost pl INNER JOIN pay p ON pl.PYNUM = p.payNum 
                 INNER JOIN usr u ON p.usrId = u.usrid
             """,
             columNames="""
