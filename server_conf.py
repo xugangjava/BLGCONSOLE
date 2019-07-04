@@ -40,10 +40,16 @@ elif sitecustomize.CUR_SERVER_ADDRESS == "btserver":
     DEBUG = False
     DB_PWD = 'BMsCt8BNuRssYrkWB9c9'
     PAY_DEBUG = False
+elif sitecustomize.CUR_SERVER_ADDRESS == "lfddzsrever":
+    # 海外审核服务器
+    WEB_HOST = "http://lfddz.billionocean.cn:8000/"
+    DEBUG = False
+    DB_PWD = 'gutG3vhsxBeYMSsUNUiblfddz'
+    PAY_DEBUG = False
 else:
     # 本机服务器
     WEB_HOST = "http://192.168.1.102:8000/"
-    DEBUG = True
+    DEBUG = False
     DB_PWD = 'bo2016@'
     PAY_DEBUG = True
 
@@ -98,3 +104,4 @@ def TRACE_ERROR(e):
 #pip install Pillow
 #pip install inapppy==0.6
 #pip install DBUtils
+#pip install sqlalchemy

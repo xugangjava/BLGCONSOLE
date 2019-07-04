@@ -103,45 +103,7 @@ def user_info():
     p = ParamWarper(request)
     with DB() as db:
         ctx = db.sql_dict("""
-            SELECT `usr`.`usrid`,
-                    `usr`.`nickname`,
-                    `usr`.`headicon`,
-                    `usr`.`imheadurl`,
-                    `usr`.`level`,
-                    `usr`.`curtitle`,
-                    `usr`.`exp`,
-                    `usr`.`moneyconsume`,
-                    `usr`.`banker`,
-                    `usr`.`lotto`,
-                    `usr`.`lottotimes`,
-                    `usr`.`lottostock`,
-                    `usr`.`chips`,
-                    `usr`.`freechipcount`,
-                    `usr`.`freechipstarttime`,
-                    `usr`.`viprewardtime`,
-                    `usr`.`savingpotchips`,
-                    `usr`.`savingpotlevel`,
-                    `usr`.`savintpotfullpush`,
-                    `usr`.`payflag`,
-                    `usr`.`firstpayflag`,
-                    `usr`.`bigpayflag`,
-                    `usr`.`vipchipflag`,
-                    `usr`.`sevendayflag`,
-                    `usr`.`openid`,
-                    `usr`.`token`,
-                    `usr`.`devicetoken`,
-                    `usr`.`passporttype`,
-                    `usr`.`regip`,
-                    `usr`.`regtime`,
-                    `usr`.`regdevice`,
-                    `usr`.`regversion`,
-                    `usr`.`versionid`,
-                    `usr`.`ai`,
-                    `usr`.`disable`,
-                    `usr`.`phone`,
-                    `usr`.`pwd`,
-                    `usr`.`luck`,
-                    lastLogintm
+            SELECT *
                 FROM `poker`.`usr`
                 WHERE usrid=%d;
         """, p.int__uid)
@@ -1503,19 +1465,19 @@ def gm_activti_list():
     with DB() as db:
         return db.sql_no_padding("select * from gm_activti")
 
-
-@route('/blg/game_win_21bust_list/', method=['GET', 'POST'])
-@login_require_ajax
-def game_win_21bust_list():
-    with DB() as db:
-        return db.sql_padding(
-            start=p.int__start,
-            limit=p.int__limit,
-            tbName="""usr_item_log l left JOIN usr u on l.UID=u.usrid""",
-            columNames="""*""",
-            orderBy='l.ID DESC',
-            condition=' AND '.join(condition)
-        )
+#
+# @route('/blg/game_win_21bust_list/', method=['GET', 'POST'])
+# @login_require_ajax
+# def game_win_21bust_list():
+#     with DB() as db:
+#         return db.sql_padding(
+#             start=p.int__start,
+#             limit=p.int__limit,
+#             tbName="""usr_item_log l left JOIN usr u on l.UID=u.usrid""",
+#             columNames="""*""",
+#             orderBy='l.ID DESC',
+#             condition=' AND '.join(condition)
+#         )
 
 @route('/blg/game_world_message_list/', method=['GET', 'POST'])
 @login_require_ajax
