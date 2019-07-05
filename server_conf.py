@@ -40,9 +40,9 @@ elif sitecustomize.CUR_SERVER_ADDRESS == "btserver":
     DEBUG = False
     DB_PWD = 'BMsCt8BNuRssYrkWB9c9'
     PAY_DEBUG = False
-elif sitecustomize.CUR_SERVER_ADDRESS == "lfddzsrever":
+elif sitecustomize.CUR_SERVER_ADDRESS == "lffddzsrever":
     # 海外审核服务器
-    WEB_HOST = "http://lfddz.billionocean.cn:8000/"
+    WEB_HOST = "http://lffddz.billionocean.cn:8000/"
     DEBUG = False
     DB_PWD = 'gutG3vhsxBeYMSsUNUiblfddz'
     PAY_DEBUG = False
