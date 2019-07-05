@@ -477,3 +477,29 @@ def random_is_happen(rate):
 def none_str(v):
     if v is None: return ''
     return str(v)
+
+
+class ENV(object):
+    """游戏环境变量"""
+    _DATA = {}
+    _REFRESH_TIME = None
+    
+    @staticmethod
+    def REFRESH():
+        if not ENV._DATA or not ENV._REFRESH_TIME or \
+                (datetime.datetime.now() - ENV._REFRESH_TIME).seconds > 8:
+            with DB() as db:
+                rs = db.sql_dict_array("select K,V,T from gm_const")
+            for r in rs:
+                if r['T'] == "int":
+                    ENV._DATA[r['K']] = int(r['V'])
+                if r['T'] == "float":
+                    ENV._DATA[r['K']] = float(r['V'])
+                else:
+                    ENV._DATA[r['K']] = str(r['V'])
+            ENV._REFRESH_TIME = datetime.datetime.now()
+    
+    @staticmethod
+    def V(key):
+        ENV.REFRESH()
+        return ENV._DATA.get(key)

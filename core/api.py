@@ -514,9 +514,9 @@ def api_get_lan_code():
         }
 
     return Success(RID=lan_id, AP=r['IS_APPROVE'],
-                   DDZMLV=6,
-                   USD=USD_CACHE['USD'],
-                   NT=4.433,
+                   DDZMLV=ENV.V('DDZMLV'),
+                   USD=ENV.V('USD'),
+                   NT=ENV.V('NT'),
                    ID=r['jump_url'] if r['open_jump'] else '')
 
 
