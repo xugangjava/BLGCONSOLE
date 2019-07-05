@@ -513,7 +513,10 @@ def api_get_lan_code():
             'USD': 6.8
         }
 
-    return Success(RID=lan_id, AP=r['IS_APPROVE'], USD=USD_CACHE['USD'], NT=4.433,
+    return Success(RID=lan_id, AP=r['IS_APPROVE'],
+                   DDZMLV=6,
+                   USD=USD_CACHE['USD'],
+                   NT=4.433,
                    ID=r['jump_url'] if r['open_jump'] else '')
 
 
