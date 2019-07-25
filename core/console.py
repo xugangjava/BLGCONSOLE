@@ -1092,7 +1092,7 @@ def user_ranking_log_list():
             limit=p.int__limit,
             tbName="ranking3_log p left join usr u on p.UID=u.usrid",
             columNames="p.*,u.*",
-            orderBy=" DT DESC,RANK ASC",
+            orderBy=" DT DESC,p.RANK ASC",
         )
     idx=0
     for r in rs['items']:
